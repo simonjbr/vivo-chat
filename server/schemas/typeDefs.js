@@ -29,7 +29,7 @@ const typeDefs = `#graphql
 	}
 
 	type Mutation {
-		addUser(username: String!, email: String!, password: String!, avatar: String!): User
+		addUser(username: String!, email: String!, password: String!, avatar: Int!): User
 	}
 `;
 

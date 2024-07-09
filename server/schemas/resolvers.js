@@ -9,12 +9,28 @@ const resolvers = {
 
 	Mutation: {
 		addUser: async (_parent, { username, email, password, avatar }) => {
-			return User.create({
+			// check if username unique
+			// const existingUsername = await User.findOne({ username });
+			// if (existingUsername) {
+			// 	return;
+			// }
+
+			// check if passwords match
+			// if (password !== confirmPassword) {
+			// 	return { error: 'Passwords do not match' };
+			// }
+
+			// create avatar url
+			const avatarUrl = `https://robohash.org/${username}?set=set${avatar}`;
+
+			const newUser = User.create({
 				username,
 				email,
 				password,
-				avatar,
+				avatar: avatarUrl,
 			});
+
+			return newUser;
 		},
 	},
 };
