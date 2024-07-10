@@ -1,4 +1,4 @@
-import { User } from '../models/index.js';
+import { Chat, Message, User } from '../models/index.js';
 import { signToken, AuthenticationError } from '../utils/auth.js';
 import { GraphQLError } from 'graphql';
 
@@ -11,10 +11,10 @@ const resolvers = {
 			return User.findById(userId);
 		},
 		me: async (_parent, _args, context) => {
-			if(context.user) {
-				return User.findById(context.user._id)
+			if (context.user) {
+				return User.findById(context.user._id);
 			}
-		}
+		},
 	},
 
 	Mutation: {
@@ -51,6 +51,52 @@ const resolvers = {
 			// generate token for authenticated user
 			const token = signToken(user);
 			return { token, user };
+		},
+		sendMessage: async (
+			_parent,
+			{ receiverId, content, senderId },
+			context
+		) => {
+			// if no senderId get from context
+			if (!senderId) {
+				senderId = context.user._id;
+			}
+
+			// try find Chat with sender and receiver as participants
+			let chat = await Chat.findOne({
+				participants: {
+					$all: [senderId, receiverId],
+				},
+			});
+
+			// if chat doesn't exist create one
+			if (!chat) {
+				chat = await Chat.create({
+					participants: [senderId, receiverId],
+				});
+			}
+
+			// create message
+			const newMessage = new Message({
+				senderId,
+				receiverId,
+				content,
+			});
+
+			// if message created successfully push onto chat's messages array
+			if (newMessage) {
+				chat.messages.push(newMessage._id);
+			}
+
+			// save updated/new documents to db in parallel
+			await Promise.all([chat.save(), newMessage.save()]);
+
+			// socket.io functionality goes here
+
+			console.log('chat', chat);
+			console.log('newMessage', newMessage);
+
+			return newMessage;
 		},
 	},
 };
