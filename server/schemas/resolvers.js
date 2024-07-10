@@ -1,4 +1,5 @@
 import { User } from '../models/index.js';
+import { signToken, AuthenticationError } from '../utils/auth.js';
 
 const resolvers = {
 	Query: {
@@ -21,6 +22,7 @@ const resolvers = {
 			// }
 
 			// create avatar url
+			// move this to pre save hook?
 			const avatarUrl = `https://robohash.org/${username}?set=set${avatar}`;
 
 			const newUser = User.create({
@@ -30,7 +32,9 @@ const resolvers = {
 				avatar: avatarUrl,
 			});
 
-			return newUser;
+			const token = signToken(newUser);
+
+			return { token, newUser };
 		},
 	},
 };
