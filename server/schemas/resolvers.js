@@ -1,5 +1,6 @@
 import { User } from '../models/index.js';
 import { signToken, AuthenticationError } from '../utils/auth.js';
+import { GraphQLError } from 'graphql';
 
 const resolvers = {
 	Query: {
@@ -10,19 +11,7 @@ const resolvers = {
 
 	Mutation: {
 		addUser: async (_parent, { username, email, password, avatar }) => {
-			// check if username unique
-			// const existingUsername = await User.findOne({ username });
-			// if (existingUsername) {
-			// 	return;
-			// }
-
-			// check if passwords match
-			// if (password !== confirmPassword) {
-			// 	return { error: 'Passwords do not match' };
-			// }
-
 			// create avatar url
-			// move this to pre save hook?
 			const avatarUrl = `https://robohash.org/${username}?set=set${avatar}`;
 
 			const newUser = User.create({
@@ -35,6 +24,25 @@ const resolvers = {
 			const token = signToken(newUser);
 
 			return { token, newUser };
+		},
+		login: async (_parent, { username, password }, _context) => {
+			const user = await User.findOne({ username });
+
+			if (!user) {
+				throw new GraphQLError('Incorrect username or password');
+			}
+
+			console.log(user);
+
+			const correctPassword = await user.isCorrectPassword(password);
+
+			if (!correctPassword) {
+				throw new GraphQLError('Incorrect username or password');
+			}
+
+			// generate token for authenticated user
+			const token = signToken(user);
+			return { token, user };
 		},
 	},
 };
