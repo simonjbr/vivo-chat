@@ -5,6 +5,7 @@ import express from 'express';
 import { ApolloServer } from '@apollo/server';
 import { expressMiddleware } from '@apollo/server/express4';
 import path from 'path';
+import { authMiddleware } from './utils/auth.js';
 
 import { typeDefs, resolvers } from './schemas/index.js';
 import db from './config/connection.js';
@@ -24,16 +25,19 @@ const startApolloServer = async () => {
 	app.use(express.urlencoded({ extended: false }));
 	app.use(express.json());
 
+	// use Apollo server middleware with context
+	app.use('/graphql', expressMiddleware(server, {
+		context: authMiddleware,
+	}));
+
 	// if in production serve client side bundle
 	if (process.env.NODE_ENV === 'production') {
 		app.use(express.static(path.join(__dirname, '../client/dist')));
+
 		app.get('*', (req, res) => {
 			res.sendFile(path.join(__dirname, '../client/dist/index.html'));
 		});
 	}
-
-	// use Apollo server middleware
-	app.use('/graphql', expressMiddleware(server));
 
 	// once connection to db is open begin listening
 	db.once('open', () => {
@@ -45,8 +49,3 @@ const startApolloServer = async () => {
 };
 
 startApolloServer();
-
-// app.listen(PORT, async () => {
-// 	await connectToMongoDb();
-// 	console.log(`Server listening at port: ${PORT}`);
-// });
