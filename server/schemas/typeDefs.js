@@ -33,6 +33,8 @@ const typeDefs = `#graphql
 		users: [User]!
 		user(userId: ID!): User
 		me: User
+
+		messages(receiverId: ID!, senderId: ID): [Message]
 	}
 
 	type Mutation {

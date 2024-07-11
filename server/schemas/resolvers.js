@@ -15,6 +15,28 @@ const resolvers = {
 				return User.findById(context.user._id);
 			}
 		},
+		messages: async (_parent, { receiverId, senderId }, context) => {
+			// if no senderId retrieve from context
+			if (!senderId) {
+				senderId = context.user._id;
+			}
+
+			// try find chat with sender and receiver as participants
+			const chat = await Chat.findOne({
+				participants: {
+					$all: [senderId, receiverId],
+				},
+			}).populate('messages');
+
+
+			// if no chat found return empty array
+			if (!chat) {
+				return [];
+			}
+
+			// otherwise return chat's messages array
+			return chat.messages;
+		},
 	},
 
 	Mutation: {
