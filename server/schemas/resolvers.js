@@ -27,7 +27,7 @@ const resolvers = {
 					$all: [senderId, receiverId],
 				},
 			}).populate('messages');
-			
+
 			// if no chat found return empty array
 			if (!chat) {
 				return [];
@@ -39,7 +39,7 @@ const resolvers = {
 	},
 
 	Mutation: {
-		addUser: async (_parent, { username, email, password, avatar }) => {
+		addUser: async (_parent, { username, email, password, avatar }, context) => {
 			// create avatar url
 			const avatarUrl = `https://robohash.org/${username}?set=set${avatar}`;
 
@@ -50,11 +50,11 @@ const resolvers = {
 				avatar: avatarUrl,
 			});
 
-			const token = signToken(newUser);
+			const token = signToken(newUser, context.res);
 
 			return { token, newUser };
 		},
-		login: async (_parent, { username, password }, _context) => {
+		login: async (_parent, { username, password }, context) => {
 			const user = await User.findOne({ username });
 
 			if (!user) {
@@ -70,7 +70,7 @@ const resolvers = {
 			}
 
 			// generate token for authenticated user
-			const token = signToken(user);
+			const token = signToken(user, context.res);
 			return { token, user };
 		},
 		sendMessage: async (

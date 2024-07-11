@@ -40,9 +40,19 @@ export const authMiddleware = ({ req }) => {
 	return req;
 };
 
-export const signToken = ({ username, email, _id }) => {
+// sign token and set cookie
+export const signToken = ({ username, email, _id }, res) => {
 	const payload = { username, email, _id };
-	return jwt.sign({ data: payload }, process.env.JWT_SECRET, {
+	const token = jwt.sign({ data: payload }, process.env.JWT_SECRET, {
 		expiresIn: process.env.TOKEN_EXP,
 	});
+
+	// set cookie
+	res.cookie('jwt', token, {
+		httpOnly: true,
+		secure: false,
+		maxAge: 2 * 60 * 60 * 1000,
+	});
+
+	return token;
 };
