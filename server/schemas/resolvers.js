@@ -27,8 +27,7 @@ const resolvers = {
 					$all: [senderId, receiverId],
 				},
 			}).populate('messages');
-
-
+			
 			// if no chat found return empty array
 			if (!chat) {
 				return [];
@@ -119,6 +118,14 @@ const resolvers = {
 			console.log('newMessage', newMessage);
 
 			return newMessage;
+		},
+	},
+	Message: {
+		senderId: async (parent) => {
+			return await User.findById(parent.senderId);
+		},
+		receiverId: async (parent) => {
+			return await User.findById(parent.receiverId);
 		},
 	},
 };
