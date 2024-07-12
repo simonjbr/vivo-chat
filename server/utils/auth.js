@@ -53,7 +53,8 @@ export const signToken = ({ username, email, _id }, res) => {
 	// set cookie
 	res.cookie('jwt', token, {
 		httpOnly: true,
-		secure: false,
+		sameSite: 'strict',
+		secure: process.env.NODE_ENV === 'production',
 		maxAge: 2 * 60 * 60 * 1000,
 	});
 
