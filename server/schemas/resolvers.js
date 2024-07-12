@@ -20,7 +20,7 @@ const resolvers = {
 			// context.headers.cookie;
 			// verified userdata found:
 			// context.user.<_id|username|email>
-			
+
 			// if no senderId retrieve from context
 			if (!senderId) {
 				senderId = context.user._id;
@@ -81,6 +81,15 @@ const resolvers = {
 			// generate token for authenticated user
 			const token = signToken(user, context.res);
 			return { token, user };
+		},
+		logout: (_parent, _args, context) => {
+			if (!context.user) {
+				return 'No user to log out!';
+			}
+			// destroy cookie
+			context.res.cookie('jwt', '', { maxAge: 0 });
+
+			return 'Successfully logged out user';
 		},
 		sendMessage: async (
 			_parent,
