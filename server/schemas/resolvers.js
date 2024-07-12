@@ -16,6 +16,11 @@ const resolvers = {
 			}
 		},
 		messages: async (_parent, { receiverId, senderId }, context) => {
+			// cookie found:
+			// context.headers.cookie;
+			// verified userdata found:
+			// context.user.<_id|username|email>
+			
 			// if no senderId retrieve from context
 			if (!senderId) {
 				senderId = context.user._id;
@@ -39,7 +44,11 @@ const resolvers = {
 	},
 
 	Mutation: {
-		addUser: async (_parent, { username, email, password, avatar }, context) => {
+		addUser: async (
+			_parent,
+			{ username, email, password, avatar },
+			context
+		) => {
 			// create avatar url
 			const avatarUrl = `https://robohash.org/${username}?set=set${avatar}`;
 

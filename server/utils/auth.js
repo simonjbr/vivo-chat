@@ -12,12 +12,14 @@ export const AuthenticationError = new GraphQLError(
 
 // auth middleware verifies token and adds user data to request object
 export const authMiddleware = ({ req }) => {
-	// get token from headers
-	let token = req.headers.authorization;
+	// get token from cookie
+	let token = req.headers.cookie;
 
-	// remove 'Bearer ' from token string
-	if (req.headers.authorization) {
-		token = token.split(' ').pop().trim();
+	// console.log(req.headers.authorization);
+
+	// remove 'jwt=' from cookie string
+	if (req.headers.cookie) {
+		token = token.split('=').pop().trim();
 	}
 
 	// if token empty return unaltered request object
@@ -31,6 +33,7 @@ export const authMiddleware = ({ req }) => {
 			maxAge: process.env.TOKEN_EXP,
 		});
 		req.user = data;
+		// console.log(data);
 	} catch (error) {
 		console.log('Invalid token');
 		console.error(error);
