@@ -9,6 +9,7 @@ import { authMiddleware } from './utils/auth.js';
 
 import { typeDefs, resolvers } from './schemas/index.js';
 import db from './config/connection.js';
+import cookieParser from 'cookie-parser';
 
 const PORT = process.env.PORT || 5000;
 const app = express();
@@ -24,11 +25,15 @@ const startApolloServer = async () => {
 
 	app.use(express.urlencoded({ extended: false }));
 	app.use(express.json());
+	app.use(cookieParser());
 
 	// use Apollo server middleware with context
-	app.use('/graphql', expressMiddleware(server, {
-		context: authMiddleware,
-	}));
+	app.use(
+		'/graphql',
+		expressMiddleware(server, {
+			context: authMiddleware,
+		})
+	);
 
 	// if in production serve client side bundle
 	if (process.env.NODE_ENV === 'production') {
