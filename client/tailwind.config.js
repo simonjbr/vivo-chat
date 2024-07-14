@@ -5,13 +5,10 @@ export default {
 	mode: 'jit',
 	content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
 	theme: {
-		colors: {
-			transparent: 'transparent',
-			current: 'currentColor',
-		},
 		extend: {
 			colors: {
 				'rich-black': '#031826',
+				'new-slate': '#12273b',
 				moonstone: '#6A9CA0',
 				platinum: '#DFDFE2',
 				zomp: '#329A79',
