@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 const Signup = () => {
-	const [username, setUsername] = useState('Roborto T 1000');
+	const [username, setUsername] = useState('');
 	const [avatar, setAvatar] = useState('');
 
 	const handleUsernameBlur = (e) => {
@@ -71,9 +71,7 @@ const Signup = () => {
 							value={avatar}
 							onChange={handleAvatarChange}
 						>
-							<option value={1} >
-								Robot #1
-							</option>
+							<option value={1}>Robot #1</option>
 							<option value={2}>Monster</option>
 							<option value={3}>Robot #2</option>
 							<option value={4}>Cat</option>
@@ -84,7 +82,11 @@ const Signup = () => {
 						<div className="avatar">
 							<div className="w-24 rounded">
 								<img
-									src={`https://robohash.org/${username}?set=set${avatar}`}
+									src={
+										username.length > 0
+											? `https://robohash.org/${username}?set=set${avatar}`
+											: `https://robohash.org/125.253.50.25.png?set=set1`
+									}
 								/>
 							</div>
 						</div>
