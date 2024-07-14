@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 const Signup = () => {
-	const [username, setUsername] = useState('');
+	const [username, setUsername] = useState('Roborto T 1000');
 	const [avatar, setAvatar] = useState('');
 
 	const handleUsernameBlur = (e) => {
@@ -71,7 +71,7 @@ const Signup = () => {
 							value={avatar}
 							onChange={handleAvatarChange}
 						>
-							<option value={1} selected>
+							<option value={1} >
 								Robot #1
 							</option>
 							<option value={2}>Monster</option>
