@@ -127,6 +127,8 @@ const resolvers = {
 				chat.messages.push(newMessage._id);
 			}
 
+			// socket.io functionality will go here
+
 			// save updated/new documents to db in parallel
 			await Promise.all([chat.save(), newMessage.save()]);
 
