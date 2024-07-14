@@ -1,4 +1,17 @@
+import { useState } from 'react';
+
 const Signup = () => {
+	const [username, setUsername] = useState('');
+	const [avatar, setAvatar] = useState('');
+
+	const handleUsernameBlur = (e) => {
+		setUsername(e.target.value);
+	};
+
+	const handleAvatarChange = (e) => {
+		setAvatar(e.target.value);
+	};
+
 	return (
 		<div className="flex flex-col items-center justify-center min-w-96 mx-auto">
 			<div className="w-full p-6 rounded-lg shadow-xl bg-steel-blue bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-15">
@@ -16,6 +29,9 @@ const Signup = () => {
 						</label>
 						<input
 							type="text"
+							name="username"
+							value={username}
+							onChange={handleUsernameBlur}
 							placeholder="Enter Username"
 							className="w-full input input-bordered h-10 bg-rich-black text-tea-green"
 						/>
@@ -50,7 +66,11 @@ const Signup = () => {
 								Robot Picker
 							</span>
 						</label>
-						<select className="w-full select select-bordered h-10 bg-rich-black">
+						<select
+							className="w-full select select-bordered h-10 bg-rich-black"
+							value={avatar}
+							onChange={handleAvatarChange}
+						>
 							<option value={1} selected>
 								Robot #1
 							</option>
@@ -60,11 +80,11 @@ const Signup = () => {
 							<option value={5}>Human</option>
 						</select>
 					</div>
-					<div className="flex flex-col items-center justify-center">
+					<div className="flex flex-col items-center justify-center mt-2">
 						<div className="avatar">
 							<div className="w-24 rounded">
 								<img
-									src={`https://robohash.org/{username}?set=set{avatar}`}
+									src={`https://robohash.org/${username}?set=set${avatar}`}
 								/>
 							</div>
 						</div>
