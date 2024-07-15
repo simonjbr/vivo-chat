@@ -4,7 +4,13 @@ const Login = () => {
 			<div className="w-full p-6 rounded-lg shadow-xl bg-steel-blue bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-15">
 				<h1 className="text-3xl font-semibold text-center text-tea-green">
 					Login
-					<span className="text-lime-greener"> vivoChat</span>
+					<span className="text-lime-greener font-light italic text-shadow">
+						{' '}
+						vivo
+					</span>
+					<span className="text-lime-green font-teko text-4xl">
+						Chat
+					</span>
 				</h1>
 
 				<form className="">
@@ -39,7 +45,9 @@ const Login = () => {
 						{"Don't"} have an account?
 					</a>
 					<div>
-						<button className="btn btn-block btn-sm text-tea-green bg-rich-black mt-2 hover:bg-new-slate">Login</button>
+						<button className="btn btn-block btn-sm text-tea-green bg-rich-black mt-2 hover:bg-new-slate">
+							Login
+						</button>
 					</div>
 				</form>
 			</div>
