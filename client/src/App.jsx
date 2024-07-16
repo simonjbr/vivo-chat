@@ -1,15 +1,12 @@
 import './App.css';
+import Home from './pages/home/Home';
+// import Login from './pages/login/Login';
+// import Signup from './pages/signup/Signup';
 
 function App() {
 	return (
-		<div className='bg-rich-black'>
-			<button className="btn text-lime-green text-shadow-lg hover:text-shadow transition-all duration-200">Button</button>
-			<button className="btn btn-neutral">Neutral</button>
-			<button className="btn btn-primary">Primary</button>
-			<button className="btn btn-secondary">Secondary</button>
-			<button className="btn btn-accent">Accent</button>
-			<button className="btn btn-ghost">Ghost</button>
-			<button className="btn btn-link">Link</button>
+		<div className=" bg-gradient-to-tr from-rich-black to-new-slate p-4 min-h-[100svh] flex items-center justify-center">
+			<Home />
 		</div>
 	);
 }

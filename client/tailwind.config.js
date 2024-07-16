@@ -5,13 +5,10 @@ export default {
 	mode: 'jit',
 	content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
 	theme: {
-		colors: {
-			transparent: 'transparent',
-			current: 'currentColor',
-		},
 		extend: {
 			colors: {
 				'rich-black': '#031826',
+				'new-slate': '#12273b',
 				moonstone: '#6A9CA0',
 				platinum: '#DFDFE2',
 				zomp: '#329A79',
@@ -27,9 +24,9 @@ export default {
 				roboto: ['Roboto', 'serif'],
 			},
 			textShadow: {
-				sm: '0 0px 1px #21FD27',
-				DEFAULT: '1px 1px 3px #21FD27',
-				lg: '1px 1px 8px #21FD27',
+				sm: '1px 1px 1px #a835f2',
+				DEFAULT: '1px 1px 3px #a835f2',
+				lg: '1px 1px 8px #a835f2',
 			},
 		},
 	},
