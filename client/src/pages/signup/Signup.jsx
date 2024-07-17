@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Signup = () => {
 	const [username, setUsername] = useState('');
@@ -91,18 +92,18 @@ const Signup = () => {
 									src={
 										username.length > 0
 											? `https://robohash.org/${username}?set=set${avatar}`
-											: `https://robohash.org/125.253.50.25.png?set=set1`
+											: `https://robohash.org/125.253.50.25.png?set=set${avatar}`
 									}
 								/>
 							</div>
 						</div>
 					</div>
-					<a
-						href=""
+					<Link
+						to="/login"
 						className="text-sm text-tea-green hover:underline hover:text-steel-blue mt-2 inline-block"
 					>
 						Already have an account?
-					</a>
+					</Link>
 					<div>
 						<button className="btn btn-block btn-sm text-tea-green bg-rich-black mt-2 hover:bg-new-slate">
 							Login
