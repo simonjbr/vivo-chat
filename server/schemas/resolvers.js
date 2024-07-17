@@ -57,16 +57,16 @@ const resolvers = {
 			// create avatar url
 			const avatarUrl = `https://robohash.org/${username}?set=set${avatar}`;
 
-			const newUser = await User.create({
+			const user = await User.create({
 				username,
 				password,
 				avatar: avatarUrl,
 			});
 
-			const token = signToken(newUser, context.res);
-			console.log(newUser);
+			const token = signToken(user, context.res);
+			console.log(user);
 
-			return { token, newUser };
+			return { token, user };
 		},
 		login: async (_parent, { username, password }, context) => {
 			const user = await User.findOne({ username });
@@ -153,6 +153,11 @@ const resolvers = {
 			return await User.findById(parent.receiverId);
 		},
 	},
+	// Auth: {
+	// 	user: async (parent) => {
+	// 		return await User.findById(parent.user._id);
+	// 	},
+	// },
 };
 
 export default resolvers;
