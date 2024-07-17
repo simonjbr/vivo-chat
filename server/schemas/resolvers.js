@@ -46,20 +46,25 @@ const resolvers = {
 	Mutation: {
 		addUser: async (
 			_parent,
-			{ username, email, password, avatar },
+			{ username, password, confirmPassword, avatar },
 			context
 		) => {
+			// check if passwords match
+			if (password !== confirmPassword) {
+				throw new GraphQLError('Passwords do not match!');
+			}
+
 			// create avatar url
 			const avatarUrl = `https://robohash.org/${username}?set=set${avatar}`;
 
-			const newUser = User.create({
+			const newUser = await User.create({
 				username,
-				email,
 				password,
 				avatar: avatarUrl,
 			});
 
 			const token = signToken(newUser, context.res);
+			console.log(newUser);
 
 			return { token, newUser };
 		},
