@@ -2,16 +2,51 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const Signup = () => {
-	const [username, setUsername] = useState('');
-	const [avatar, setAvatar] = useState('');
+	const [formInputs, setFormInput] = useState({
+		username: '',
+		password: '',
+		confirmPassword: '',
+		avatar: 1,
+	});
 
-	const handleUsernameBlur = (e) => {
-		setUsername(e.target.value);
+	const handleInputChange = (e) => {
+		const { name, value } = e.target;
+
+		console.log(name, value);
+
+		switch (name) {
+			case 'username':
+				setFormInput({
+					...formInputs,
+					username: value,
+				});
+				break;
+			case 'password':
+				setFormInput({
+					...formInputs,
+					password: value,
+				});
+				break;
+			case 'confirmPassword':
+				setFormInput({
+					...formInputs,
+					confirmPassword: value,
+				})
+				break;
+			case 'avatar':
+				setFormInput({
+					...formInputs,
+					avatar: value,
+				});
+				break;
+			default:
+				break;
+		}
 	};
 
-	const handleAvatarChange = (e) => {
-		setAvatar(e.target.value);
-	};
+	const handleSignupSubmit = (e) => {
+		e.preventDefault();
+	}
 
 	return (
 		<div className="flex flex-col items-center justify-center min-w-96 mx-auto">
@@ -27,7 +62,7 @@ const Signup = () => {
 					</span>
 				</h1>
 
-				<form>
+				<form onSubmit={handleSignupSubmit}>
 					<div>
 						<label className="label p-2">
 							<span className="text-base label-text text-tea-green">
@@ -37,10 +72,10 @@ const Signup = () => {
 						<input
 							type="text"
 							name="username"
-							value={username}
-							onChange={handleUsernameBlur}
+							value={formInputs.username}
+							onChange={handleInputChange}
 							placeholder="Enter Username"
-							className="w-full input input-bordered h-10 bg-rich-black text-tea-green"
+							className="w-full input input-bordered h-10 bg-new-slate focus:bg-rich-black text-tea-green"
 						/>
 					</div>
 					<div>
@@ -51,8 +86,11 @@ const Signup = () => {
 						</label>
 						<input
 							type="password"
+							name="password"
+							value={formInputs.password}
+							onChange={handleInputChange}
 							placeholder="Enter Password"
-							className="w-full input input-bordered h-10 bg-rich-black text-tea-green"
+							className="w-full input input-bordered h-10 bg-new-slate focus:bg-rich-black text-tea-green"
 						/>
 					</div>
 					<div>
@@ -63,8 +101,11 @@ const Signup = () => {
 						</label>
 						<input
 							type="password"
+							name="confirmPassword"
+							value={formInputs.confirmPassword}
+							onChange={handleInputChange}
 							placeholder="Confirm Password"
-							className="w-full input input-bordered h-10 bg-rich-black text-tea-green"
+							className="w-full input input-bordered h-10 bg-new-slate focus:bg-rich-black text-tea-green"
 						/>
 					</div>
 					<div>
@@ -74,9 +115,10 @@ const Signup = () => {
 							</span>
 						</label>
 						<select
-							className="w-full select select-bordered h-10 bg-rich-black"
-							value={avatar}
-							onChange={handleAvatarChange}
+							name="avatar"
+							value={formInputs.avatar}
+							onChange={handleInputChange}
+							className="w-full select select-bordered h-10 bg-new-slate focus:bg-rich-black"
 						>
 							<option value={1}>Robot #1</option>
 							<option value={2}>Monster</option>
@@ -90,9 +132,9 @@ const Signup = () => {
 							<div className="w-24 rounded">
 								<img
 									src={
-										username.length > 0
-											? `https://robohash.org/${username}?set=set${avatar}`
-											: `https://robohash.org/125.253.50.25.png?set=set${avatar}`
+										formInputs.username.length > 0
+											? `https://robohash.org/${formInputs.username}?set=set${formInputs.avatar}`
+											: `https://robohash.org/125.253.50.25.png?set=set${formInputs.avatar}`
 									}
 								/>
 							</div>
@@ -106,7 +148,7 @@ const Signup = () => {
 					</Link>
 					<div>
 						<button className="btn btn-block btn-sm text-tea-green bg-rich-black mt-2 hover:bg-new-slate">
-							Login
+							Signup
 						</button>
 					</div>
 				</form>
