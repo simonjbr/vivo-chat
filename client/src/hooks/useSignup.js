@@ -37,7 +37,6 @@ const useSignup = ({ username, password, confirmPassword, avatar }) => {
 					confirmPassword,
 					avatar
 				);
-				console.log(data.addUser.user._id);
 				if (error) {
 					throw new Error(error);
 				}

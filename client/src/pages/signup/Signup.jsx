@@ -14,7 +14,9 @@ const Signup = () => {
 	const { loading, signup } = useSignup(formInputs);
 	const { authUser } = useAuthContext();
 
-	console.log(authUser._id);
+	if (authUser) {
+		console.log(authUser._id);
+	}
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
@@ -30,8 +32,6 @@ const Signup = () => {
 				[name]: value,
 			});
 		}
-
-		console.log(formInputs);
 	};
 
 	const handleSignupSubmit = async (e) => {
