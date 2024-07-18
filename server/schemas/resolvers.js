@@ -19,7 +19,7 @@ const resolvers = {
 			// cookie found:
 			// context.headers.cookie;
 			// verified userdata found:
-			// context.user.<_id|username|email>
+			// context.user.<_id|username>
 
 			// if no senderId retrieve from context
 			if (!senderId) {
@@ -46,22 +46,35 @@ const resolvers = {
 	Mutation: {
 		addUser: async (
 			_parent,
-			{ username, email, password, avatar },
+			{ username, password, confirmPassword, avatar },
 			context
 		) => {
+			// check if passwords match
+			if (password !== confirmPassword) {
+				throw new GraphQLError('Passwords do not match!');
+			}
+
+			const existingUser = await User.findOne({ username });
+			if (existingUser) {
+				console.log(existingUser);
+				throw new GraphQLError(
+					`The username: ${username} is already in use!`
+				);
+			}
+
 			// create avatar url
 			const avatarUrl = `https://robohash.org/${username}?set=set${avatar}`;
 
-			const newUser = User.create({
+			const user = await User.create({
 				username,
-				email,
 				password,
 				avatar: avatarUrl,
 			});
 
-			const token = signToken(newUser, context.res);
+			const token = signToken(user, context.res);
+			console.log(user);
 
-			return { token, newUser };
+			return { token, user };
 		},
 		login: async (_parent, { username, password }, context) => {
 			const user = await User.findOne({ username });
@@ -148,6 +161,11 @@ const resolvers = {
 			return await User.findById(parent.receiverId);
 		},
 	},
+	// Auth: {
+	// 	user: async (parent) => {
+	// 		return await User.findById(parent.user._id);
+	// 	},
+	// },
 };
 
 export default resolvers;

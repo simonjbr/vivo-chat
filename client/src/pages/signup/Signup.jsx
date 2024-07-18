@@ -1,16 +1,53 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import useSignup from '../../hooks/useSignup';
+import { useAuthContext } from '../../context/AuthContext';
 
 const Signup = () => {
-	const [username, setUsername] = useState('');
-	const [avatar, setAvatar] = useState('');
+	const [formInputs, setFormInputs] = useState({
+		username: '',
+		password: '',
+		confirmPassword: '',
+		avatar: 1,
+	});
 
-	const handleUsernameBlur = (e) => {
-		setUsername(e.target.value);
+	const { loading, signup } = useSignup(formInputs);
+	const { authUser } = useAuthContext();
+
+	if (authUser) {
+		console.log(authUser._id);
+	}
+
+	const handleInputChange = (e) => {
+		const { name, value } = e.target;
+
+		if (name === 'avatar') {
+			setFormInputs({
+				...formInputs,
+				avatar: parseInt(value),
+			});
+		} else {
+			setFormInputs({
+				...formInputs,
+				[name]: value,
+			});
+		}
 	};
 
-	const handleAvatarChange = (e) => {
-		setAvatar(e.target.value);
+	const handleSignupSubmit = async (e) => {
+		e.preventDefault();
+
+		const success = await signup();
+
+		// if successful reset form
+		if (success) {
+			setFormInputs({
+				username: '',
+				password: '',
+				confirmPassword: '',
+				avatar: 1,
+			});
+		}
 	};
 
 	return (
@@ -27,7 +64,7 @@ const Signup = () => {
 					</span>
 				</h1>
 
-				<form>
+				<form onSubmit={handleSignupSubmit}>
 					<div>
 						<label className="label p-2">
 							<span className="text-base label-text text-tea-green">
@@ -37,10 +74,10 @@ const Signup = () => {
 						<input
 							type="text"
 							name="username"
-							value={username}
-							onChange={handleUsernameBlur}
+							value={formInputs.username}
+							onChange={handleInputChange}
 							placeholder="Enter Username"
-							className="w-full input input-bordered h-10 bg-rich-black text-tea-green"
+							className="w-full input input-bordered h-10 bg-new-slate focus:bg-rich-black text-tea-green"
 						/>
 					</div>
 					<div>
@@ -51,8 +88,11 @@ const Signup = () => {
 						</label>
 						<input
 							type="password"
+							name="password"
+							value={formInputs.password}
+							onChange={handleInputChange}
 							placeholder="Enter Password"
-							className="w-full input input-bordered h-10 bg-rich-black text-tea-green"
+							className="w-full input input-bordered h-10 bg-new-slate focus:bg-rich-black text-tea-green"
 						/>
 					</div>
 					<div>
@@ -63,8 +103,11 @@ const Signup = () => {
 						</label>
 						<input
 							type="password"
+							name="confirmPassword"
+							value={formInputs.confirmPassword}
+							onChange={handleInputChange}
 							placeholder="Confirm Password"
-							className="w-full input input-bordered h-10 bg-rich-black text-tea-green"
+							className="w-full input input-bordered h-10 bg-new-slate focus:bg-rich-black text-tea-green"
 						/>
 					</div>
 					<div>
@@ -74,9 +117,10 @@ const Signup = () => {
 							</span>
 						</label>
 						<select
-							className="w-full select select-bordered h-10 bg-rich-black"
-							value={avatar}
-							onChange={handleAvatarChange}
+							name="avatar"
+							value={formInputs.avatar}
+							onChange={handleInputChange}
+							className="w-full select select-bordered h-10 bg-new-slate focus:bg-rich-black"
 						>
 							<option value={1}>Robot #1</option>
 							<option value={2}>Monster</option>
@@ -90,9 +134,9 @@ const Signup = () => {
 							<div className="w-24 rounded">
 								<img
 									src={
-										username.length > 0
-											? `https://robohash.org/${username}?set=set${avatar}`
-											: `https://robohash.org/125.253.50.25.png?set=set${avatar}`
+										formInputs.username.length > 0
+											? `https://robohash.org/${formInputs.username}?set=set${formInputs.avatar}`
+											: `https://robohash.org/125.253.50.25.png?set=set${formInputs.avatar}`
 									}
 								/>
 							</div>
@@ -105,8 +149,15 @@ const Signup = () => {
 						Already have an account?
 					</Link>
 					<div>
-						<button className="btn btn-block btn-sm text-tea-green bg-rich-black mt-2 hover:bg-new-slate">
-							Login
+						<button
+							className="btn btn-block btn-sm text-tea-green bg-rich-black mt-2 hover:bg-new-slate"
+							disabled={loading}
+						>
+							{loading ? (
+								<span className="loading loading-spinner"></span>
+							) : (
+								'Signup'
+							)}
 						</button>
 					</div>
 				</form>

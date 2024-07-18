@@ -2,8 +2,6 @@ const typeDefs = `#graphql
 	type User {
 		_id: ID!
 		username: String!
-		email: String!
-		password: String!
 		avatar: String!
 		friends: [User!]!
 		# timestamps
@@ -38,7 +36,7 @@ const typeDefs = `#graphql
 	}
 
 	type Mutation {
-		addUser(username: String!, email: String!, password: String!, avatar: Int!): Auth
+		addUser(username: String!, password: String!, confirmPassword: String!, avatar: Int!): Auth
 		login(username: String!, password: String!): Auth
 		logout: String
 

@@ -44,8 +44,8 @@ export const authMiddleware = ({ req }) => {
 };
 
 // sign token and set cookie
-export const signToken = ({ username, email, _id }, res) => {
-	const payload = { username, email, _id };
+export const signToken = ({ username, _id }, res) => {
+	const payload = { username, _id };
 	const token = jwt.sign({ data: payload }, process.env.JWT_SECRET, {
 		expiresIn: process.env.TOKEN_EXP,
 	});
