@@ -147,8 +147,15 @@ const Signup = () => {
 						Already have an account?
 					</Link>
 					<div>
-						<button className="btn btn-block btn-sm text-tea-green bg-rich-black mt-2 hover:bg-new-slate">
-							Signup
+						<button
+							className="btn btn-block btn-sm text-tea-green bg-rich-black mt-2 hover:bg-new-slate"
+							disabled={loading}
+						>
+							{loading ? (
+								<span className="loading loading-spinner"></span>
+							) : (
+								'Signup'
+							)}
 						</button>
 					</div>
 				</form>
