@@ -56,7 +56,7 @@ const Login = () => {
 							value={formInputs.username}
 							onChange={handleInputChange}
 							placeholder="Enter Username"
-							className="w-full input input-bordered h-10 bg-rich-black text-tea-green"
+							className="w-full input input-bordered h-10 bg-new-slate focus:bg-rich-black text-tea-green"
 						/>
 					</div>
 					<div>
@@ -71,7 +71,7 @@ const Login = () => {
 							value={formInputs.password}
 							onChange={handleInputChange}
 							placeholder="Enter Password"
-							className="w-full input input-bordered h-10 bg-rich-black text-tea-green"
+							className="w-full input input-bordered h-10 bg-new-slate focus:bg-rich-black text-tea-green"
 						/>
 					</div>
 					<Link
