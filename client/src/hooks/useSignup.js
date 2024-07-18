@@ -49,6 +49,8 @@ const useSignup = ({ username, password, confirmPassword, avatar }) => {
 
 				// add user to context
 				setAuthUser(data.addUser.user);
+
+				toast.success(`Welcome ${data.addUser.user.username}!`);
 			} catch (error) {
 				console.log(error.message);
 			} finally {
