@@ -54,6 +54,14 @@ const resolvers = {
 				throw new GraphQLError('Passwords do not match!');
 			}
 
+			const existingUser = await User.findOne({ username });
+			if (existingUser) {
+				console.log(existingUser);
+				throw new GraphQLError(
+					`The username: ${username} is already in use!`
+				);
+			}
+
 			// create avatar url
 			const avatarUrl = `https://robohash.org/${username}?set=set${avatar}`;
 
