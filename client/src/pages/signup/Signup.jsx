@@ -1,40 +1,45 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import useSignup from '../../hooks/useSignup';
+import { useAuthContext } from '../../context/AuthContext';
 
 const Signup = () => {
-	const [formInputs, setFormInput] = useState({
+	const [formInputs, setFormInputs] = useState({
 		username: '',
 		password: '',
 		confirmPassword: '',
 		avatar: 1,
 	});
 
+	const { loading, signup } = useSignup(formInputs);
+	const {authUser} = useAuthContext();
+
+	console.log(authUser._id)
+
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
 
-		console.log(name, value);
-
 		switch (name) {
 			case 'username':
-				setFormInput({
+				setFormInputs({
 					...formInputs,
 					username: value,
 				});
 				break;
 			case 'password':
-				setFormInput({
+				setFormInputs({
 					...formInputs,
 					password: value,
 				});
 				break;
 			case 'confirmPassword':
-				setFormInput({
+				setFormInputs({
 					...formInputs,
 					confirmPassword: value,
-				})
+				});
 				break;
 			case 'avatar':
-				setFormInput({
+				setFormInputs({
 					...formInputs,
 					avatar: value,
 				});
@@ -44,9 +49,19 @@ const Signup = () => {
 		}
 	};
 
-	const handleSignupSubmit = (e) => {
+	const handleSignupSubmit = async (e) => {
 		e.preventDefault();
-	}
+
+		await signup();
+
+		// reset form
+		setFormInputs({
+			username: '',
+			password: '',
+			confirmPassword: '',
+			avatar: 1,
+		});
+	};
 
 	return (
 		<div className="flex flex-col items-center justify-center min-w-96 mx-auto">
