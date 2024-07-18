@@ -15,6 +15,11 @@ const useLogin = ({ username, password }) => {
 	});
 
 	const login = async () => {
+		const isValidInput = validateInput(username, password);
+		if (!isValidInput) {
+			return false;
+		}
+
 		setLoading(true);
 		try {
 			const { data, error } = await loginMutation(username, password);
@@ -37,5 +42,14 @@ const useLogin = ({ username, password }) => {
 	};
 
 	return { loading, login };
+};
+
+const validateInput = (username, password) => {
+	if (!username || !password) {
+		toast.error('Please fill in all fields');
+		return false;
+	}
+
+	return true;
 };
 export default useLogin;
