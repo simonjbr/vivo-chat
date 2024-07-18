@@ -19,7 +19,7 @@ const resolvers = {
 			// cookie found:
 			// context.headers.cookie;
 			// verified userdata found:
-			// context.user.<_id|username|email>
+			// context.user.<_id|username>
 
 			// if no senderId retrieve from context
 			if (!senderId) {
