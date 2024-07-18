@@ -12,41 +12,26 @@ const Signup = () => {
 	});
 
 	const { loading, signup } = useSignup(formInputs);
-	const {authUser} = useAuthContext();
+	const { authUser } = useAuthContext();
 
-	console.log(authUser._id)
+	console.log(authUser._id);
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
 
-		switch (name) {
-			case 'username':
-				setFormInputs({
-					...formInputs,
-					username: value,
-				});
-				break;
-			case 'password':
-				setFormInputs({
-					...formInputs,
-					password: value,
-				});
-				break;
-			case 'confirmPassword':
-				setFormInputs({
-					...formInputs,
-					confirmPassword: value,
-				});
-				break;
-			case 'avatar':
-				setFormInputs({
-					...formInputs,
-					avatar: value,
-				});
-				break;
-			default:
-				break;
+		if (name === 'avatar') {
+			setFormInputs({
+				...formInputs,
+				avatar: parseInt(value),
+			});
+		} else {
+			setFormInputs({
+				...formInputs,
+				[name]: value,
+			});
 		}
+
+		console.log(formInputs);
 	};
 
 	const handleSignupSubmit = async (e) => {
