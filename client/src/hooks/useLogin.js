@@ -28,10 +28,12 @@ const useLogin = ({ username, password }) => {
 
 			toast.success(`Welcome back ${data.login.user.username}!`);
 		} catch (error) {
-			console.log(error);
+			toast.error(error.message);
+			return false;
 		} finally {
 			setLoading(false);
 		}
+		return true;
 	};
 
 	return { loading, login };

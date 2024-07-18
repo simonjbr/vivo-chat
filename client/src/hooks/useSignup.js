@@ -26,7 +26,7 @@ const useSignup = ({ username, password, confirmPassword, avatar }) => {
 				avatar
 			);
 			if (!isValidInput) {
-				return;
+				return false;
 			}
 
 			setLoading(true);
@@ -52,10 +52,12 @@ const useSignup = ({ username, password, confirmPassword, avatar }) => {
 
 				toast.success(`Welcome ${data.addUser.user.username}!`);
 			} catch (error) {
-				console.log(error.message);
+				toast.error(error.message);
+				return false;
 			} finally {
 				setLoading(false);
 			}
+			return true;
 		};
 
 	return { loading, signup };

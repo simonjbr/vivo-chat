@@ -37,15 +37,17 @@ const Signup = () => {
 	const handleSignupSubmit = async (e) => {
 		e.preventDefault();
 
-		await signup();
+		const success = await signup();
 
-		// reset form
-		setFormInputs({
-			username: '',
-			password: '',
-			confirmPassword: '',
-			avatar: 1,
-		});
+		// if successful reset form
+		if (success) {
+			setFormInputs({
+				username: '',
+				password: '',
+				confirmPassword: '',
+				avatar: 1,
+			});
+		}
 	};
 
 	return (
