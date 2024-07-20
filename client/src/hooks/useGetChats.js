@@ -6,21 +6,24 @@ import toast from 'react-hot-toast';
 const useGetChats = () => {
 	const [loading, setLoading] = useState(false);
 	const [chats, setChats] = useState([]);
-	const { error, data } = useQuery(USERS);
+	const { error, data, loading: loadingQuery } = useQuery(USERS);
 
 	useEffect(() => {
-		const getChats = async () => {
+		const getChats = () => {
 			setLoading(true);
 
-			try {
-				// const { data, error } = await useQuery(USERS);
+			if (loadingQuery || error) {
+				setChats([]);
+				return;
+			}
 
+			try {
 				if (error) {
 					throw new Error(error);
 				}
-
-				setChats(data.users);
 				console.log(data);
+
+				setChats(data?.users || []);
 			} catch (error) {
 				toast.error(error);
 			} finally {
@@ -29,6 +32,7 @@ const useGetChats = () => {
 		};
 
 		getChats();
+		
 	}, [data]);
 
 	return { loading, chats };
