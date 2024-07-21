@@ -5,11 +5,7 @@ import { GraphQLError } from 'graphql';
 const resolvers = {
 	Query: {
 		users: async (_parent, _args, context) => {
-			return await User.find({
-				_id: {
-					$ne: context.user._id,
-				},
-			});
+			return await User.find();
 		},
 		user: async (_parent, { userId }) => {
 			return await User.findById(userId);

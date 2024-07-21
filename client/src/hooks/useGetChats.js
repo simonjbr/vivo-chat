@@ -21,7 +21,6 @@ const useGetChats = () => {
 				if (error) {
 					throw new Error(error);
 				}
-				console.log(data);
 
 				setChats(data?.users || []);
 			} catch (error) {
@@ -32,7 +31,6 @@ const useGetChats = () => {
 		};
 
 		getChats();
-		
 	}, [data]);
 
 	return { loading, chats };
