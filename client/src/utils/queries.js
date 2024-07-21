@@ -21,12 +21,14 @@ export const MESSAGES = gql`
 			senderId {
 				_id
 				username
+				avatar
 			}
 			receiverId {
 				_id
 				username
 			}
 			content
+			createdAt
 		}
 	}
 `;
