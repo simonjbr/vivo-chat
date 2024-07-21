@@ -13,3 +13,20 @@ export const USERS = gql`
 		}
 	}
 `;
+
+export const MESSAGES = gql`
+	query Messages($receiverId: ID!, $senderId: ID) {
+		messages(receiverId: $receiverId, senderId: $senderId) {
+			_id
+			senderId {
+				_id
+				username
+			}
+			receiverId {
+				_id
+				username
+			}
+			content
+		}
+	}
+`;
