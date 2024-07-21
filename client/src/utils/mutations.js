@@ -39,3 +39,24 @@ export const LOGIN = gql`
 		}
 	}
 `;
+
+export const SEND_MESSAGE = gql`
+	mutation SendMessage($receiverId: ID!, $content: String!, $senderId: ID) {
+		sendMessage(
+			receiverId: $receiverId
+			content: $content
+			senderId: $senderId
+		) {
+			_id
+			senderId {
+				_id
+				username
+			}
+			receiverId {
+				_id
+				username
+			}
+			content
+		}
+	}
+`;
