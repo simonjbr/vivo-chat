@@ -12,7 +12,7 @@ const typeDefs = `#graphql
 		senderId: User!
 		receiverId: User!
 		content: String!
-		# timestamps
+		createdAt: String!
 	}
 
 	type Chat {

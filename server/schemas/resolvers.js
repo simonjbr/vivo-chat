@@ -4,15 +4,15 @@ import { GraphQLError } from 'graphql';
 
 const resolvers = {
 	Query: {
-		users: async () => {
-			return User.find();
+		users: async (_parent, _args, context) => {
+			return await User.find();
 		},
 		user: async (_parent, { userId }) => {
-			return User.findById(userId);
+			return await User.findById(userId);
 		},
 		me: async (_parent, _args, context) => {
 			if (context.user) {
-				return User.findById(context.user._id);
+				return await User.findById(context.user._id);
 			}
 		},
 		messages: async (_parent, { receiverId, senderId }, context) => {
