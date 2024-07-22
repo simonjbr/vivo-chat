@@ -33,6 +33,7 @@ const useSendMessage = ({ receiverId, content }) => {
 				throw new Error(error);
 			}
 
+			// probably don't need this
 			setMessages([...messages, data.sendMessage]);
 
 			console.log(messages);
