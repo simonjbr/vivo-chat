@@ -16,7 +16,11 @@ const Message = ({ message }) => {
 					<img src={message.senderId.avatar} alt="user avatar" />
 				</div>
 			</div>
-			<div className={`chat-bubble shadow-sm text-white ${isFromMe ? 'bg-steel-blue' : 'bg-new-slate'}`}>
+			<div
+				className={`chat-bubble max-w-72 shadow-sm text-white ${
+					isFromMe ? 'bg-steel-blue' : 'bg-new-slate'
+				}`}
+			>
 				{message.content}
 			</div>
 			<div className="chat-footer opacity-50 text-xs flex gap-1 items-center">

@@ -2,7 +2,7 @@ import { useQuery } from '@apollo/client';
 import useChatStore from '../../store/useChatStore';
 import Message from './Message';
 import { MESSAGES } from '../../utils/queries';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import MessageSkeleton from '../skeleton/MessageSkeleton';
 import { useAuthContext } from '../../context/AuthContext';
 
@@ -17,6 +17,13 @@ const Messages = () => {
 	});
 
 	const [messages, setMessages] = useState([]);
+	const lastMessageRef = useRef();
+
+	useEffect(() => {
+		setTimeout(() => {
+			lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
+		}, 100);
+	}, [selectedChat]);
 
 	useEffect(() => {
 		if (error) {
@@ -34,7 +41,9 @@ const Messages = () => {
 				<p className="text-center">Send a message to start the chat</p>
 			) : (
 				messages.map((message) => (
-					<Message key={message._id} message={message} />
+					<div key={message._id} ref={lastMessageRef}>
+						<Message message={message} />
+					</div>
 				))
 			)}
 		</div>
