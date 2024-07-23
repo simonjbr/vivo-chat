@@ -42,6 +42,10 @@ const typeDefs = `#graphql
 
 		sendMessage(receiverId: ID!, content: String!, senderId: ID): Message
 	}
+
+	type Subscription {
+		newMessage: Message
+	}
 `;
 
 export default typeDefs;

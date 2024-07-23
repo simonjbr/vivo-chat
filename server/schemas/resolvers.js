@@ -2,6 +2,11 @@ import { Chat, Message, User } from '../models/index.js';
 import { signToken, AuthenticationError } from '../utils/auth.js';
 import { GraphQLError } from 'graphql';
 
+import { PubSub } from 'graphql-subscriptions';
+
+// create a PubSub instance to publish and listen for events
+const pubsub = new PubSub();
+
 const resolvers = {
 	Query: {
 		users: async (_parent, _args, context) => {
@@ -140,7 +145,16 @@ const resolvers = {
 				chat.messages.push(newMessage._id);
 			}
 
-			// socket.io functionality will go here
+			// publish event to the NEW_MESSAGE topic
+			pubsub.publish('NEW_MESSAGE', {
+				newMessage: {
+					_id: newMessage._id,
+					createdAt: new Date(),
+					receiverId,
+					content,
+					senderId,
+				},
+			});
 
 			// save updated/new documents to db in parallel
 			await Promise.all([chat.save(), newMessage.save()]);
@@ -161,11 +175,12 @@ const resolvers = {
 			return await User.findById(parent.receiverId);
 		},
 	},
-	// Auth: {
-	// 	user: async (parent) => {
-	// 		return await User.findById(parent.user._id);
-	// 	},
-	// },
+	Subscription: {
+		newMessage: {
+			// maybe implement withFilter here
+			subscribe: () => pubsub.asyncIterator(['NEW_MESSAGE']),
+		},
+	},
 };
 
 export default resolvers;
