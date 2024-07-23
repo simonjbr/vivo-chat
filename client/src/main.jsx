@@ -6,8 +6,46 @@ import { BrowserRouter } from 'react-router-dom';
 import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 import { AuthProvider } from './context/AuthContext.jsx';
 
+// graphql subscription/websocket imports
+import { split, HttpLink } from '@apollo/client';
+import { getMainDefinition } from '@apollo/client/utilities';
+import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
+import { createClient } from 'graphql-ws';
+// import { WebSocketLink } from '@apollo/client/link/ws';
+
+// create http link for queries and mutations
+const httpLink = new HttpLink({
+	uri: 'http://localhost:3000/graphql',
+});
+
+// create websocket link for subscription operations
+const wsLink = new GraphQLWsLink(
+	createClient({
+		url: 'ws://localhost:5000/graphql',
+		connectionParams: {
+			authToken: JSON.parse(localStorage.getItem('vivo-user')) || null,
+		},
+	})
+);
+
+// split link assesses whether to use http or ws and
+// returns the appropriate link for ApolloClient
+const splitLink = split(
+	({ query }) => {
+		const definition = getMainDefinition(query);
+		console.log(definition);
+		return (
+			definition.kind === 'OperationDefinition' &&
+			definition.operation === 'subscription'
+		);
+	},
+	wsLink,
+	httpLink
+);
+
+// create apollo client with splitLink
 const client = new ApolloClient({
-	uri: '/graphql',
+	link: splitLink,
 	cache: new InMemoryCache(),
 });
 
