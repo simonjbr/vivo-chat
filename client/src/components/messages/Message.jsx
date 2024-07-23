@@ -8,7 +8,6 @@ const Message = ({ message }) => {
 		.format('hh:mm a');
 	const isFromMe = message.senderId._id === authUser._id;
 
-	console.log(authUser);
 	return (
 		<div className={`chat ${isFromMe ? 'chat-end' : 'chat-start'}`}>
 			<div className="chat-image avatar">

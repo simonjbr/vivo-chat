@@ -5,6 +5,8 @@ import { MESSAGES } from '../../utils/queries';
 import { useEffect, useRef, useState } from 'react';
 import MessageSkeleton from '../skeleton/MessageSkeleton';
 import { useAuthContext } from '../../context/AuthContext';
+import { useSubscription } from '@apollo/client';
+import { NEW_MESSAGE } from '../../utils/subscriptions';
 
 const Messages = () => {
 	const { selectedChat } = useChatStore();
@@ -19,11 +21,13 @@ const Messages = () => {
 	const [messages, setMessages] = useState([]);
 	const lastMessageRef = useRef();
 
+	const subscription = useSubscription(NEW_MESSAGE);
+
 	useEffect(() => {
 		setTimeout(() => {
 			lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
 		}, 100);
-	}, [selectedChat]);
+	}, [selectedChat, messages]);
 
 	useEffect(() => {
 		if (error) {
@@ -33,6 +37,13 @@ const Messages = () => {
 			setMessages(data.messages);
 		}
 	}, [data, error]);
+
+	useEffect(() => {
+		if (!subscription.loading && subscription.data) {
+			setMessages([...messages, subscription.data.newMessage]);
+		}
+	}, [subscription]);
+
 	return (
 		<div className="px-4 flex-1 overflow-auto">
 			{loading ? (
