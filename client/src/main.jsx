@@ -15,13 +15,13 @@ import { createClient } from 'graphql-ws';
 
 // create http link for queries and mutations
 const httpLink = new HttpLink({
-	uri: 'http://localhost:3000/graphql',
+	uri: '/graphql',
 });
 
 // create websocket link for subscription operations
 const wsLink = new GraphQLWsLink(
 	createClient({
-		url: 'ws://localhost:5000/graphql',
+		url: '/subscription',
 		connectionParams: {
 			authToken: JSON.parse(localStorage.getItem('vivo-user')) || null,
 		},
@@ -33,7 +33,6 @@ const wsLink = new GraphQLWsLink(
 const splitLink = split(
 	({ query }) => {
 		const definition = getMainDefinition(query);
-		console.log(definition);
 		return (
 			definition.kind === 'OperationDefinition' &&
 			definition.operation === 'subscription'

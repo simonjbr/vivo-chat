@@ -10,6 +10,12 @@ export default defineConfig({
 			'/graphql': {
 				target: 'http://localhost:5000',
 			},
+			'/subscription': {
+				target: 'ws://localhost:5000',
+				ws: true,
+				rewriteWsOrigin: true,
+			}
 		},
+
 	},
 });

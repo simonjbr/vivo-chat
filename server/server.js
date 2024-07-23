@@ -49,7 +49,7 @@ const server = new ApolloServer({
 // create a WebSocketServer to use as the subscription server
 const wsServer = new WebSocketServer({
 	server: httpServer,
-	path: '/graphql',
+	path: '/subscription',
 });
 
 // provide context to subscription
