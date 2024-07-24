@@ -1,9 +1,40 @@
+import { useMutation, useQuery } from '@apollo/client';
+import { useAuthContext } from '../../context/AuthContext';
 import useChatStore from '../../store/useChatStore';
+import { CHAT } from '../../utils/queries';
+import { CREATE_CHAT } from '../../utils/mutations';
 
 const Chat = ({ chat, lastIndex }) => {
 	const { selectedChat, setSelectedChat } = useChatStore();
-
+	const { authUser } = useAuthContext();
 	const isSelected = selectedChat?._id === chat._id;
+	const { data, error } = useQuery(CHAT, {
+		variables: {
+			participantOne: authUser._id,
+			participantTwo: chat._id,
+		},
+	});
+	const [createChat] = useMutation(CREATE_CHAT, {
+		refetchQueries: [CHAT, 'Chat'],
+	});
+
+	const handleChatSelect = async () => {
+		setSelectedChat(chat);
+		if (data) {
+			return;
+		}
+		if (error && error.message.toString() === 'No such chat exists') {
+			const { error: createError } = await createChat({
+				variables: {
+					participantOne: authUser._id,
+					participantTwo: chat._id,
+				},
+			});
+			if (createError) {
+				console.log(createError.message);
+			}
+		}
+	};
 
 	return (
 		<>
@@ -11,7 +42,7 @@ const Chat = ({ chat, lastIndex }) => {
 				className={`flex gap-2 items-center hover:bg-rich-black rounded p-2 py-1 cursor-pointer ${
 					isSelected ? 'bg-rich-black' : ''
 				}`}
-				onClick={() => setSelectedChat(chat)}
+				onClick={handleChatSelect}
 			>
 				<div className="avatar online">
 					<div className="w-12 rounded-full">
