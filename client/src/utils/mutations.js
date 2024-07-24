@@ -60,3 +60,31 @@ export const SEND_MESSAGE = gql`
 		}
 	}
 `;
+
+export const CREATE_CHAT = gql`
+	mutation CreateChat($participantOne: ID!, $participantTwo: ID!) {
+		createChat(
+			participantOne: $participantOne
+			participantTwo: $participantTwo
+		) {
+			_id
+			participants {
+				_id
+				username
+			}
+			messages {
+				_id
+				senderId {
+					_id
+					username
+				}
+				receiverId {
+					_id
+					username
+				}
+				content
+				createdAt
+			}
+		}
+	}
+`;

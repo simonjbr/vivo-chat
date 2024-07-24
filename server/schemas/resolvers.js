@@ -191,6 +191,38 @@ const resolvers = {
 
 			return newMessage;
 		},
+		createChat: async (
+			_parent,
+			{ participantOne, participantTwo },
+			context
+		) => {
+			if (!context.user) {
+				throw new GraphQLError('Unauthorized');
+			}
+
+			// try find an existing Chat with specified participants
+			let existingChat = await Chat.findOne({
+				participants: {
+					$all: [participantOne, participantTwo],
+				},
+			});
+
+			if (existingChat) {
+				throw new GraphQLError(
+					'Chat with these participants already exists'
+				);
+			}
+
+			const chat = await Chat.create({
+				participants: [participantOne, participantTwo],
+			});
+
+			if (!chat) {
+				throw new GraphQLError('Failed to create Chat');
+			}
+
+			return await chat.populate('participants');
+		},
 	},
 	Message: {
 		senderId: async (parent) => {

@@ -43,6 +43,7 @@ const typeDefs = `#graphql
 		logout: String
 
 		sendMessage(receiverId: ID!, content: String!, senderId: ID): Message
+		createChat(participantOne: ID!, participantTwo: ID!): Chat
 	}
 
 	type Subscription {
