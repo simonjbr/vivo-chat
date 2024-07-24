@@ -46,6 +46,36 @@ const resolvers = {
 			// otherwise return chat's messages array
 			return chat.messages;
 		},
+		chats: async (_parent, _args, context) => {
+			const chats = await Chat.find({
+				// participants: {
+				// 	$in: context.user._id,
+				// },
+			}).populate('participants');
+
+			if (!chats) {
+				throw new GraphQLError('Could not find any chats');
+			}
+
+			console.log(chats);
+
+			return chats;
+		},
+		chat: async (_parent, { participantOne, participantTwo }, _context) => {
+			const chat = await Chat.findOne({
+				participants: {
+					$all: [participantOne, participantTwo],
+				},
+			})
+				.populate('participants')
+				.populate('messages');
+
+			if (!chat) {
+				throw new GraphQLError('No such chat exists');
+			}
+
+			return chat;
+		},
 	},
 
 	Mutation: {
@@ -158,11 +188,6 @@ const resolvers = {
 
 			// save updated/new documents to db in parallel
 			await Promise.all([chat.save(), newMessage.save()]);
-
-			// socket.io functionality goes here
-
-			console.log('chat', chat);
-			console.log('newMessage', newMessage);
 
 			return newMessage;
 		},

@@ -32,3 +32,40 @@ export const MESSAGES = gql`
 		}
 	}
 `;
+
+export const CHATS = gql`
+	query Chats {
+		chats {
+			_id
+			participants {
+				_id
+				username
+				avatar
+			}
+		}
+	}
+`;
+
+export const CHAT = gql`
+	query Chat($participantOne: ID!, $participantTwo: ID!) {
+		chat(participantOne: $participantOne, participantTwo: $participantTwo) {
+			_id
+			participants {
+				_id
+				username
+			}
+			messages {
+				_id
+				senderId {
+					_id
+					avatar
+				}
+				receiverId {
+					_id
+				}
+				content
+				createdAt
+			}
+		}
+	}
+`;

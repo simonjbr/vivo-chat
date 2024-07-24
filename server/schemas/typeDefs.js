@@ -33,6 +33,8 @@ const typeDefs = `#graphql
 		me: User
 
 		messages(receiverId: ID!, senderId: ID): [Message]
+		chats: [Chat]
+		chat(participantOne: ID!, participantTwo: ID!): Chat
 	}
 
 	type Mutation {
