@@ -69,3 +69,9 @@ export const CHAT = gql`
 		}
 	}
 `;
+
+export const ONLINE_USERS = gql`
+	query GetOnlineUsers {
+		getOnlineUsers
+	}
+`;

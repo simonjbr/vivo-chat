@@ -18,3 +18,15 @@ export const NEW_MESSAGE = gql`
 		}
 	}
 `;
+
+export const LOGGED_IN = gql`
+	subscription LoggedIn {
+		loggedIn
+	}
+`;
+
+export const LOGGED_OUT = gql`
+	subscription LoggedOut {
+		loggedOut
+	}
+`;
