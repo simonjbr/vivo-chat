@@ -11,6 +11,7 @@ import { split, HttpLink } from '@apollo/client';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
+import { OnlineUserContextProvider } from './context/OnlineUserContext.jsx';
 // import { WebSocketLink } from '@apollo/client/link/ws';
 
 // create http link for queries and mutations
@@ -53,7 +54,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 		<ApolloProvider client={client}>
 			<BrowserRouter>
 				<AuthProvider>
-					<App />
+					<OnlineUserContextProvider>
+						<App />
+					</OnlineUserContextProvider>
 				</AuthProvider>
 			</BrowserRouter>
 		</ApolloProvider>

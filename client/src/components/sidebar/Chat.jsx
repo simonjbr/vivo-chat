@@ -3,6 +3,7 @@ import { useAuthContext } from '../../context/AuthContext';
 import useChatStore from '../../store/useChatStore';
 import { CHAT } from '../../utils/queries';
 import { CREATE_CHAT } from '../../utils/mutations';
+import { useOnlineUserContext } from '../../context/OnlineUserContext';
 
 const Chat = ({ chat, lastIndex }) => {
 	const { selectedChat, setSelectedChat } = useChatStore();
@@ -17,6 +18,9 @@ const Chat = ({ chat, lastIndex }) => {
 	const [createChat] = useMutation(CREATE_CHAT, {
 		refetchQueries: [CHAT, 'Chat'],
 	});
+	const { onlineUsers } = useOnlineUserContext();
+
+	const isOnline = onlineUsers.includes(chat._id);
 
 	const handleChatSelect = async () => {
 		setSelectedChat(chat);
@@ -44,7 +48,7 @@ const Chat = ({ chat, lastIndex }) => {
 				}`}
 				onClick={handleChatSelect}
 			>
-				<div className="avatar online">
+				<div className={`avatar ${isOnline ? 'online' : ''}`}>
 					<div className="w-12 rounded-full">
 						<img src={chat.avatar} alt="user avatar" />
 					</div>
