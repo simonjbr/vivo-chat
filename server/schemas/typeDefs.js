@@ -35,6 +35,8 @@ const typeDefs = `#graphql
 		messages(receiverId: ID!, senderId: ID): [Message]
 		chats: [Chat]
 		chat(participantOne: ID!, participantTwo: ID!): Chat
+
+		getOnlineUsers: [ID]
 	}
 
 	type Mutation {
@@ -48,6 +50,8 @@ const typeDefs = `#graphql
 
 	type Subscription {
 		newMessage: Message
+		loggedIn: ID
+		loggedOut: ID
 	}
 `;
 

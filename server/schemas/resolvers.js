@@ -3,6 +3,7 @@ import { signToken, AuthenticationError } from '../utils/auth.js';
 import { GraphQLError } from 'graphql';
 
 import { PubSub } from 'graphql-subscriptions';
+import onlineUsers from '../utils/onlineUsers.js';
 
 // create a PubSub instance to publish and listen for events
 const pubsub = new PubSub();
@@ -76,6 +77,9 @@ const resolvers = {
 
 			return chat;
 		},
+		getOnlineUsers: async (_parent, _args, _context) => {
+			return onlineUsers;
+		},
 	},
 
 	Mutation: {
@@ -126,14 +130,37 @@ const resolvers = {
 				throw new GraphQLError('Incorrect username or password');
 			}
 
+			// if user already logged in throw error
+			if (onlineUsers.has(user._id.toString())) {
+				throw new GraphQLError('User is aleady logged in!');
+			}
+
 			// generate token for authenticated user
 			const token = signToken(user, context.res);
+
+			// push user's _id onto onlineUsers set
+			onlineUsers.add(user._id.toString());
+			console.log(onlineUsers);
+
+			// publish loggedIn event for subscription
+			pubsub.publish('LOGGED_IN', {
+				loggedIn: user._id.toString(),
+			});
+
 			return { token, user };
 		},
 		logout: (_parent, _args, context) => {
 			if (!context.user) {
 				return 'No user to log out!';
 			}
+
+			// remove user from onlineUsers set
+			onlineUsers.delete(context.user._id);
+
+			pubsub.publish('LOGGED_OUT', {
+				loggedOut: context.user._id,
+			});
+
 			// destroy cookie
 			context.res.cookie('jwt', '', { maxAge: 0 });
 
@@ -236,6 +263,12 @@ const resolvers = {
 		newMessage: {
 			// maybe implement withFilter here
 			subscribe: () => pubsub.asyncIterator(['NEW_MESSAGE']),
+		},
+		loggedIn: {
+			subscribe: () => pubsub.asyncIterator(['LOGGED_IN']),
+		},
+		loggedOut: {
+			subscribe: () => pubsub.asyncIterator(['LOGGED_OUT']),
 		},
 	},
 };
