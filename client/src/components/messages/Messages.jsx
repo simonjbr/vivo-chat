@@ -11,24 +11,25 @@ import { NEW_MESSAGE } from '../../utils/subscriptions';
 const Messages = () => {
 	const { selectedChat } = useChatStore();
 	const { authUser } = useAuthContext();
-	// const { data, error, loading } = useQuery(MESSAGES, {
-	// 	variables: {
-	// 		receiverId: selectedChat._id,
-	// 		senderId: authUser._id,
-	// 	},
-	// });
-	const { data, error, loading } = useQuery(CHAT, {
+	const { data, error, loading, refetch } = useQuery(CHAT, {
 		variables: {
 			participantOne: authUser._id,
 			participantTwo: selectedChat._id,
 		},
 	});
-	const participants = data?.chat.participants;
-
 	const [messages, setMessages] = useState([]);
 	const lastMessageRef = useRef();
 
-	const subscription = useSubscription(NEW_MESSAGE);
+	const subscription = useSubscription(NEW_MESSAGE, {
+		variables: {
+			authUserId: authUser._id,
+			selectedChatId: selectedChat._id,
+		},
+	});
+
+	useEffect(() => {
+		refetch();
+	}, [selectedChat]);
 
 	useEffect(() => {
 		setTimeout(() => {
@@ -41,6 +42,7 @@ const Messages = () => {
 			console.log(error.message);
 			return;
 		}
+		// if no chat exists set messages to empty array
 		if (!data?.chat) {
 			setMessages([]);
 			return;
@@ -50,26 +52,19 @@ const Messages = () => {
 		}
 	}, [data, error]);
 
-	const participantsInclude = (id) => {
-		if (!participants) {
-			return false;
-		}
-		for (const participant of participants) {
-			if (participant._id === id) return true;
-		}
-		return false;
-	};
-
 	useEffect(() => {
 		if (!subscription.loading && subscription.data) {
 			const newMessage = subscription.data.newMessage;
 
 			if (
-				participantsInclude(newMessage.senderId._id) &&
-				participantsInclude(newMessage.receiverId._id)
+				newMessage.senderId._id === selectedChat._id ||
+				newMessage.receiverId._id === selectedChat._id
 			) {
 				setMessages([...messages, newMessage]);
+				return;
 			}
+
+			// notifications implemented here
 		}
 	}, [subscription]);
 
