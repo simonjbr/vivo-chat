@@ -34,7 +34,7 @@ const Messages = () => {
 	useEffect(() => {
 		setTimeout(() => {
 			lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
-		}, 100);
+		}, 1300);
 	}, [selectedChat, messages]);
 
 	useEffect(() => {

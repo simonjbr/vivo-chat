@@ -5,7 +5,7 @@ import { OnlineUserContextProvider } from '../../context/OnlineUserContext.jsx';
 const Home = () => {
 	return (
 		<OnlineUserContextProvider>
-			<div className="flex sm:h-[450px] md:h-[550px] rounded-lg overflow-hidden bg-steel-blue bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-15">
+			<div className="flex h-[97svh] sm:h-[550px] rounded-lg overflow-hidden bg-steel-blue bg-clip-padding backdrop-filter backdrop-blur-lg bg-opacity-15">
 				<Sidebar />
 				<MessageContainer />
 			</div>
