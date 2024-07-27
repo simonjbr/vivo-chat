@@ -113,6 +113,15 @@ const resolvers = {
 			const token = signToken(user, context.res);
 			console.log(user);
 
+			// publish signedUp event for subscription
+			pubsub.publish('SIGNED_UP', {
+				signedUp: user,
+			});
+			// also publish loggedIn event for subscription
+			pubsub.publish('LOGGED_IN', {
+				loggedIn: user._id.toString(),
+			});
+
 			return { token, user };
 		},
 		login: async (_parent, { username, password }, context) => {
@@ -287,6 +296,9 @@ const resolvers = {
 		},
 		loggedOut: {
 			subscribe: () => pubsub.asyncIterator(['LOGGED_OUT']),
+		},
+		signedUp: {
+			subscribe: () => pubsub.asyncIterator(['SIGNED_UP']),
 		},
 	},
 };
