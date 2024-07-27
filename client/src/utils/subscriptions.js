@@ -30,3 +30,16 @@ export const LOGGED_OUT = gql`
 		loggedOut
 	}
 `;
+
+export const SIGNED_UP = gql`
+	subscription SignedUp {
+		signedUp {
+			_id
+			username
+			avatar
+			friends {
+				_id
+			}
+		}
+	}
+`;
