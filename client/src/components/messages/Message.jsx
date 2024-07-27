@@ -8,7 +8,6 @@ const Message = ({ message }) => {
 		.format('hh:mm a');
 	const isFromMe = message.senderId._id === authUser._id;
 
-	console.log(authUser);
 	return (
 		<div className={`chat ${isFromMe ? 'chat-end' : 'chat-start'}`}>
 			<div className="chat-image avatar">
@@ -19,7 +18,7 @@ const Message = ({ message }) => {
 			<div
 				className={`chat-bubble max-w-72 shadow-sm text-white ${
 					isFromMe ? 'bg-steel-blue' : 'bg-new-slate'
-				}`}
+				} ${message.shake ? 'shake' : ''}`}
 			>
 				{message.content}
 			</div>

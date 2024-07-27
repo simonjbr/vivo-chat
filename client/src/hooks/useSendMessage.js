@@ -35,8 +35,6 @@ const useSendMessage = ({ receiverId, content }) => {
 
 			// probably don't need this
 			setMessages([...messages, data.sendMessage]);
-
-			console.log(messages);
 		} catch (error) {
 			toast.error(error);
 			return false;

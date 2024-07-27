@@ -1,38 +1,81 @@
 import { useQuery } from '@apollo/client';
 import useChatStore from '../../store/useChatStore';
 import Message from './Message';
-import { MESSAGES } from '../../utils/queries';
+import { CHAT } from '../../utils/queries';
 import { useEffect, useRef, useState } from 'react';
 import MessageSkeleton from '../skeleton/MessageSkeleton';
 import { useAuthContext } from '../../context/AuthContext';
+import { useSubscription } from '@apollo/client';
+import { NEW_MESSAGE } from '../../utils/subscriptions';
+import messagePopAlert from '../../assets/mixkit-message-pop-alert-2354.mp3';
 
 const Messages = () => {
 	const { selectedChat } = useChatStore();
 	const { authUser } = useAuthContext();
-	const { data, error, loading } = useQuery(MESSAGES, {
+	const { data, error, loading, refetch } = useQuery(CHAT, {
 		variables: {
-			receiverId: selectedChat._id,
-			senderId: authUser._id,
+			participantOne: authUser._id,
+			participantTwo: selectedChat._id,
+		},
+	});
+	const [messages, setMessages] = useState([]);
+	const lastMessageRef = useRef();
+
+	const subscription = useSubscription(NEW_MESSAGE, {
+		variables: {
+			authUserId: authUser._id,
+			selectedChatId: selectedChat._id,
 		},
 	});
 
-	const [messages, setMessages] = useState([]);
-	const lastMessageRef = useRef();
+	useEffect(() => {
+		refetch();
+	}, [selectedChat]);
 
 	useEffect(() => {
 		setTimeout(() => {
 			lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
 		}, 100);
-	}, [selectedChat]);
+	}, [selectedChat, messages]);
 
 	useEffect(() => {
 		if (error) {
 			console.log(error.message);
+			return;
 		}
-		if (data) {
-			setMessages(data.messages);
+		// if no chat exists set messages to empty array
+		if (!data?.chat) {
+			setMessages([]);
+			return;
+		}
+		if (data?.chat) {
+			setMessages(data.chat.messages);
 		}
 	}, [data, error]);
+
+	useEffect(() => {
+		if (!subscription.loading && subscription.data) {
+			const newMessage = subscription.data.newMessage;
+
+			if (
+				newMessage.senderId._id === selectedChat._id ||
+				newMessage.receiverId._id === selectedChat._id
+			) {
+				// add shake animation flag
+				newMessage.shake = true;
+
+				// play new message notification sound
+				const sound = new Audio(messagePopAlert);
+				sound.play();
+
+				setMessages([...messages, newMessage]);
+				return;
+			}
+
+			// notifications implemented here
+		}
+	}, [subscription]);
+
 	return (
 		<div className="px-4 flex-1 overflow-auto">
 			{loading ? (

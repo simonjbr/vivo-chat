@@ -2,6 +2,12 @@ import { Chat, Message, User } from '../models/index.js';
 import { signToken, AuthenticationError } from '../utils/auth.js';
 import { GraphQLError } from 'graphql';
 
+import { PubSub, withFilter } from 'graphql-subscriptions';
+import onlineUsers from '../utils/onlineUsers.js';
+
+// create a PubSub instance to publish and listen for events
+const pubsub = new PubSub();
+
 const resolvers = {
 	Query: {
 		users: async (_parent, _args, context) => {
@@ -41,6 +47,39 @@ const resolvers = {
 			// otherwise return chat's messages array
 			return chat.messages;
 		},
+		chats: async (_parent, _args, context) => {
+			const chats = await Chat.find({
+				// participants: {
+				// 	$in: context.user._id,
+				// },
+			}).populate('participants');
+
+			if (!chats) {
+				throw new GraphQLError('Could not find any chats');
+			}
+
+			console.log(chats);
+
+			return chats;
+		},
+		chat: async (_parent, { participantOne, participantTwo }, _context) => {
+			const chat = await Chat.findOne({
+				participants: {
+					$all: [participantOne, participantTwo],
+				},
+			})
+				.populate('participants')
+				.populate('messages');
+
+			if (!chat) {
+				throw new GraphQLError('No such chat exists');
+			}
+
+			return chat;
+		},
+		getOnlineUsers: async (_parent, _args, _context) => {
+			return onlineUsers;
+		},
 	},
 
 	Mutation: {
@@ -74,6 +113,15 @@ const resolvers = {
 			const token = signToken(user, context.res);
 			console.log(user);
 
+			// publish signedUp event for subscription
+			pubsub.publish('SIGNED_UP', {
+				signedUp: user,
+			});
+			// also publish loggedIn event for subscription
+			pubsub.publish('LOGGED_IN', {
+				loggedIn: user._id.toString(),
+			});
+
 			return { token, user };
 		},
 		login: async (_parent, { username, password }, context) => {
@@ -91,14 +139,37 @@ const resolvers = {
 				throw new GraphQLError('Incorrect username or password');
 			}
 
+			// if user already logged in throw error
+			if (onlineUsers.has(user._id.toString())) {
+				throw new GraphQLError('User is aleady logged in!');
+			}
+
 			// generate token for authenticated user
 			const token = signToken(user, context.res);
+
+			// push user's _id onto onlineUsers set
+			onlineUsers.add(user._id.toString());
+			console.log(onlineUsers);
+
+			// publish loggedIn event for subscription
+			pubsub.publish('LOGGED_IN', {
+				loggedIn: user._id.toString(),
+			});
+
 			return { token, user };
 		},
 		logout: (_parent, _args, context) => {
 			if (!context.user) {
 				return 'No user to log out!';
 			}
+
+			// remove user from onlineUsers set
+			onlineUsers.delete(context.user._id);
+
+			pubsub.publish('LOGGED_OUT', {
+				loggedOut: context.user._id,
+			});
+
 			// destroy cookie
 			context.res.cookie('jwt', '', { maxAge: 0 });
 
@@ -140,17 +211,53 @@ const resolvers = {
 				chat.messages.push(newMessage._id);
 			}
 
-			// socket.io functionality will go here
+			// publish event to the NEW_MESSAGE topic
+			pubsub.publish('NEW_MESSAGE', {
+				newMessage: {
+					_id: newMessage._id,
+					createdAt: new Date(),
+					receiverId,
+					content,
+					senderId,
+				},
+			});
 
 			// save updated/new documents to db in parallel
 			await Promise.all([chat.save(), newMessage.save()]);
 
-			// socket.io functionality goes here
-
-			console.log('chat', chat);
-			console.log('newMessage', newMessage);
-
 			return newMessage;
+		},
+		createChat: async (
+			_parent,
+			{ participantOne, participantTwo },
+			context
+		) => {
+			if (!context.user) {
+				throw new GraphQLError('Unauthorized');
+			}
+
+			// try find an existing Chat with specified participants
+			let existingChat = await Chat.findOne({
+				participants: {
+					$all: [participantOne, participantTwo],
+				},
+			});
+
+			if (existingChat) {
+				throw new GraphQLError(
+					'Chat with these participants already exists'
+				);
+			}
+
+			const chat = await Chat.create({
+				participants: [participantOne, participantTwo],
+			});
+
+			if (!chat) {
+				throw new GraphQLError('Failed to create Chat');
+			}
+
+			return await chat.populate('participants');
 		},
 	},
 	Message: {
@@ -161,11 +268,39 @@ const resolvers = {
 			return await User.findById(parent.receiverId);
 		},
 	},
-	// Auth: {
-	// 	user: async (parent) => {
-	// 		return await User.findById(parent.user._id);
-	// 	},
-	// },
+	Subscription: {
+		newMessage: {
+			// only sunscribe authUsers who are sender/receiver of the new message
+			subscribe: withFilter(
+				() => pubsub.asyncIterator(['NEW_MESSAGE']),
+				(payload, _variables, context) => {
+					// console.log('payload: ', payload);
+					// console.log('variables: ', variables);
+					// console.log('context: ', context);
+
+					if (!context.authUser) {
+						console.log(`No authUser in subscription context`);
+						return false;
+					}
+
+					return (
+						context.authUser._id ===
+							payload.newMessage.receiverId ||
+						context.authUser._id === payload.newMessage.senderId
+					);
+				}
+			),
+		},
+		loggedIn: {
+			subscribe: () => pubsub.asyncIterator(['LOGGED_IN']),
+		},
+		loggedOut: {
+			subscribe: () => pubsub.asyncIterator(['LOGGED_OUT']),
+		},
+		signedUp: {
+			subscribe: () => pubsub.asyncIterator(['SIGNED_UP']),
+		},
+	},
 };
 
 export default resolvers;

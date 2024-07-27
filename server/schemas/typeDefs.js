@@ -33,6 +33,10 @@ const typeDefs = `#graphql
 		me: User
 
 		messages(receiverId: ID!, senderId: ID): [Message]
+		chats: [Chat]
+		chat(participantOne: ID!, participantTwo: ID!): Chat
+
+		getOnlineUsers: [ID]
 	}
 
 	type Mutation {
@@ -41,6 +45,14 @@ const typeDefs = `#graphql
 		logout: String
 
 		sendMessage(receiverId: ID!, content: String!, senderId: ID): Message
+		createChat(participantOne: ID!, participantTwo: ID!): Chat
+	}
+
+	type Subscription {
+		newMessage(authUserId: ID!, selectedChatId: ID!): Message
+		loggedIn: ID
+		loggedOut: ID
+		signedUp: User
 	}
 `;
 
