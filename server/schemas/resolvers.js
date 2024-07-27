@@ -2,7 +2,7 @@ import { Chat, Message, User } from '../models/index.js';
 import { signToken, AuthenticationError } from '../utils/auth.js';
 import { GraphQLError } from 'graphql';
 
-import { PubSub } from 'graphql-subscriptions';
+import { PubSub, withFilter } from 'graphql-subscriptions';
 import onlineUsers from '../utils/onlineUsers.js';
 
 // create a PubSub instance to publish and listen for events
@@ -261,8 +261,26 @@ const resolvers = {
 	},
 	Subscription: {
 		newMessage: {
-			// maybe implement withFilter here
-			subscribe: () => pubsub.asyncIterator(['NEW_MESSAGE']),
+			// only sunscribe authUsers who are sender/receiver of the new message
+			subscribe: withFilter(
+				() => pubsub.asyncIterator(['NEW_MESSAGE']),
+				(payload, _variables, context) => {
+					// console.log('payload: ', payload);
+					// console.log('variables: ', variables);
+					// console.log('context: ', context);
+
+					if (!context.authUser) {
+						console.log(`No authUser in subscription context`);
+						return false;
+					}
+
+					return (
+						context.authUser._id ===
+							payload.newMessage.receiverId ||
+						context.authUser._id === payload.newMessage.senderId
+					);
+				}
+			),
 		},
 		loggedIn: {
 			subscribe: () => pubsub.asyncIterator(['LOGGED_IN']),
