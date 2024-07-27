@@ -18,7 +18,7 @@ const Message = ({ message }) => {
 			<div
 				className={`chat-bubble max-w-72 shadow-sm text-white ${
 					isFromMe ? 'bg-steel-blue' : 'bg-new-slate'
-				}`}
+				} ${message.shake ? 'shake' : ''}`}
 			>
 				{message.content}
 			</div>

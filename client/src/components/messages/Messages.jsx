@@ -7,6 +7,7 @@ import MessageSkeleton from '../skeleton/MessageSkeleton';
 import { useAuthContext } from '../../context/AuthContext';
 import { useSubscription } from '@apollo/client';
 import { NEW_MESSAGE } from '../../utils/subscriptions';
+import messagePopAlert from '../../assets/mixkit-message-pop-alert-2354.mp3';
 
 const Messages = () => {
 	const { selectedChat } = useChatStore();
@@ -34,7 +35,7 @@ const Messages = () => {
 	useEffect(() => {
 		setTimeout(() => {
 			lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
-		}, 1300);
+		}, 100);
 	}, [selectedChat, messages]);
 
 	useEffect(() => {
@@ -60,6 +61,13 @@ const Messages = () => {
 				newMessage.senderId._id === selectedChat._id ||
 				newMessage.receiverId._id === selectedChat._id
 			) {
+				// add shake animation flag
+				newMessage.shake = true;
+
+				// play new message notification sound
+				const sound = new Audio(messagePopAlert);
+				sound.play();
+
 				setMessages([...messages, newMessage]);
 				return;
 			}
