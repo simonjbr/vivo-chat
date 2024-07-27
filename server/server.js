@@ -55,9 +55,12 @@ const wsServer = new WebSocketServer({
 // provide context to subscription
 const getDynamicContext = async (ctx, msg, args) => {
 	console.log('ctx.connectionParams', ctx.connectionParams);
-	// console.log('msg', msg);
-	// console.log('args', args);
-	return;
+	if (ctx.connectionParams.authToken) {
+		const authUser = ctx.connectionParams.authToken;
+		return { authUser };
+	}
+
+	return { authUser: null };
 };
 
 // start WebSocketServer listening
