@@ -52,6 +52,7 @@ const typeDefs = `#graphql
 		newMessage(authUserId: ID!, selectedChatId: ID!): Message
 		loggedIn: ID
 		loggedOut: ID
+		signedUp: User
 	}
 `;
 
