@@ -58,8 +58,6 @@ const resolvers = {
 				throw new GraphQLError('Could not find any chats');
 			}
 
-			console.log(chats);
-
 			return chats;
 		},
 		chat: async (_parent, { participantOne, participantTwo }, _context) => {
@@ -95,7 +93,6 @@ const resolvers = {
 
 			const existingUser = await User.findOne({ username });
 			if (existingUser) {
-				console.log(existingUser);
 				throw new GraphQLError(
 					`The username: ${username} is already in use!`
 				);
@@ -111,7 +108,6 @@ const resolvers = {
 			});
 
 			const token = signToken(user, context.res);
-			console.log(user);
 
 			// publish signedUp event for subscription
 			pubsub.publish('SIGNED_UP', {
@@ -131,8 +127,6 @@ const resolvers = {
 				throw new GraphQLError('Incorrect username or password');
 			}
 
-			console.log(user);
-
 			const correctPassword = await user.isCorrectPassword(password);
 
 			if (!correctPassword) {
@@ -149,7 +143,6 @@ const resolvers = {
 
 			// push user's _id onto onlineUsers set
 			onlineUsers.add(user._id.toString());
-			console.log(onlineUsers);
 
 			// publish loggedIn event for subscription
 			pubsub.publish('LOGGED_IN', {
