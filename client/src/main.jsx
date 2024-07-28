@@ -11,6 +11,7 @@ import { split, HttpLink } from '@apollo/client';
 import { getMainDefinition } from '@apollo/client/utilities';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
 import { createClient } from 'graphql-ws';
+import { NotificationProvider } from './context/NotificationContext.jsx';
 
 // import { WebSocketLink } from '@apollo/client/link/ws';
 
@@ -54,7 +55,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
 		<ApolloProvider client={client}>
 			<BrowserRouter>
 				<AuthProvider>
-					<App />
+					<NotificationProvider>
+						<App />
+					</NotificationProvider>
 				</AuthProvider>
 			</BrowserRouter>
 		</ApolloProvider>

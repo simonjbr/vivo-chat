@@ -1,10 +1,19 @@
 import useGetChats from '../../hooks/useGetChats';
 import Chat from './Chat';
 import { useAuthContext } from '../../context/AuthContext';
+import useChatStore from '../../store/useChatStore';
+import { useEffect } from 'react';
 
 const Chats = () => {
 	const { loading, chats } = useGetChats();
 	const { authUser } = useAuthContext();
+	const { setSelectedChat } = useChatStore();
+
+	useEffect(() => {
+		if (!loading) {
+			setSelectedChat(chats[0]);
+		}
+	}, [chats])
 
 	return (
 		<div className="py-2 flex flex-col overflow-auto">

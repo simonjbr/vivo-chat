@@ -8,6 +8,7 @@ import { useAuthContext } from '../../context/AuthContext';
 import { useSubscription } from '@apollo/client';
 import { NEW_MESSAGE } from '../../utils/subscriptions';
 import messagePopAlert from '../../assets/mixkit-message-pop-alert-2354.mp3';
+import { useNotificationContext } from '../../context/NotificationContext';
 
 const Messages = () => {
 	const { selectedChat } = useChatStore();
@@ -20,6 +21,7 @@ const Messages = () => {
 	});
 	const [messages, setMessages] = useState([]);
 	const lastMessageRef = useRef();
+	const { notifications, setNotifications } = useNotificationContext();
 
 	const subscription = useSubscription(NEW_MESSAGE, {
 		variables: {
@@ -72,7 +74,11 @@ const Messages = () => {
 				return;
 			}
 
-			// notifications implemented here
+			// if message sent to a non-selected chat add id to notifications array
+			if (!selectedChat || newMessage.senderId._id !== selectedChat._id) {
+				console.log('notifications:', notifications);
+				setNotifications([...notifications, newMessage.senderId._id]);
+			}
 		}
 	}, [subscription]);
 

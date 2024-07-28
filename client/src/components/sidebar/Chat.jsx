@@ -4,6 +4,8 @@ import useChatStore from '../../store/useChatStore';
 import { CHAT } from '../../utils/queries';
 import { CREATE_CHAT } from '../../utils/mutations';
 import { useOnlineUserContext } from '../../context/OnlineUserContext';
+import { useNotificationContext } from '../../context/NotificationContext';
+import { useEffect } from 'react';
 
 const Chat = ({ chat, lastIndex }) => {
 	const { selectedChat, setSelectedChat } = useChatStore();
@@ -21,6 +23,20 @@ const Chat = ({ chat, lastIndex }) => {
 	const { onlineUsers } = useOnlineUserContext();
 
 	const isOnline = onlineUsers.includes(chat._id);
+
+	
+	const { notifications, setNotifications } = useNotificationContext();
+	const hasNotification = notifications.includes(chat._id);
+
+	useEffect(() => {
+		// if chat with notification is selected remove from the notifications array
+		if (hasNotification && selectedChat._id === chat._id) {
+			const nextNotifications = notifications.filter(
+				(notification) => notification !== selectedChat._id
+			);
+			setNotifications(nextNotifications);
+		}
+	}, [selectedChat]);
 
 	const handleChatSelect = async () => {
 		setSelectedChat(chat);
@@ -45,6 +61,8 @@ const Chat = ({ chat, lastIndex }) => {
 			<div
 				className={`flex gap-2 items-center hover:bg-rich-black rounded p-2 py-1 cursor-pointer ${
 					isSelected ? 'bg-rich-black' : ''
+				} ${
+					hasNotification ? 'bg-steel-blue border-2 border-lime-green' : ''
 				}`}
 				onClick={handleChatSelect}
 			>
@@ -59,7 +77,9 @@ const Chat = ({ chat, lastIndex }) => {
 						<p className="font-bold text-mint-green">
 							{chat.username}
 						</p>
-						<span className="text-xl">{':]'}</span>
+						<span className="text-xl">
+							{hasNotification ? '!!!!!' : ':]'}
+						</span>
 					</div>
 				</div>
 			</div>
