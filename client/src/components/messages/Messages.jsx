@@ -35,10 +35,12 @@ const Messages = () => {
 	}, [selectedChat]);
 
 	useEffect(() => {
-		setTimeout(() => {
-			lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
-		}, 100);
-	}, [selectedChat, messages]);
+		if (!loading) {
+			setTimeout(() => {
+				lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
+			}, 0);
+		}
+	}, [selectedChat, messages, loading]);
 
 	useEffect(() => {
 		if (error) {
