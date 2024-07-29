@@ -6,15 +6,12 @@
 	"scripts": {
 		"start": "node server/server.js",
 		"start:dev": "nodemon server/server.js",
-		"develop": "concurrently \"cd server && npm run watch\" \"cd client && npm run dev\"",
+		"client:dev": "npm run dev --prefix client",
 		"install": "cd server && npm i && cd ../client && npm i",
 		"seed": "cd server && npm run seed",
 		"build": "npm install && cd client && npm run build"
 	},
 	"keywords": [],
 	"author": "",
-	"license": "ISC",
-	"devDependencies": {
-		"concurrently": "^8.2.2"
-	}
+	"license": "ISC"
 }
