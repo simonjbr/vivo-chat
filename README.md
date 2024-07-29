@@ -51,6 +51,10 @@ Deployed screenshot:
 
 [Apollo GraphQL](https://www.apollographql.com/)
 
+[Tailwind CSS](https://tailwindcss.com/)
+
+[Daisy UI](https://daisyui.com/)
+
 [bcrypt](https://www.npmjs.com/package/bcrypt)
 
 [cookie-parser](https://www.npmjs.com/package/cookie-parser)
