@@ -10,10 +10,11 @@ const Chats = () => {
 	const { setSelectedChat } = useChatStore();
 
 	useEffect(() => {
-		if (!loading) {
-			setSelectedChat(chats[0]);
+		if (!loading && chats.length > 0) {
+			const defaultChat = chats[0]._id !== authUser._id ? chats[0] : chats[1];
+			setSelectedChat(defaultChat);
 		}
-	}, [chats])
+	}, [chats]);
 
 	return (
 		<div className="py-2 flex flex-col overflow-auto">
