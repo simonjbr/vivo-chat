@@ -78,7 +78,6 @@ const Messages = () => {
 
 			// if message sent to a non-selected chat add id to notifications array
 			if (!selectedChat || newMessage.senderId._id !== selectedChat._id) {
-				console.log('notifications:', notifications);
 				setNotifications([...notifications, newMessage.senderId._id]);
 			}
 		}
