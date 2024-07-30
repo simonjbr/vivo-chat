@@ -64,7 +64,6 @@ const getDynamicContext = async (ctx, msg, args) => {
 				maxAge: process.env.TOKEN_EXP,
 			});
 
-			console.log(data);
 			return { authUser: data };
 		}
 	}

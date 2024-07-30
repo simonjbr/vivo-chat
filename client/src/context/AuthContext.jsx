@@ -22,7 +22,6 @@ export const AuthProvider = ({ children }) => {
 		}
 
 		if (data?.verifyToken.user) {
-			console.log('data:', data);
 			setAuthUser(data.verifyToken.user);
 		}
 
