@@ -44,7 +44,7 @@ const useSignup = ({ username, password, confirmPassword, avatar }) => {
 				// persist authUser in localStorage
 				localStorage.setItem(
 					'vivo-user',
-					JSON.stringify(data.addUser.user)
+					JSON.stringify(data.addUser.token)
 				);
 
 				// add user to context

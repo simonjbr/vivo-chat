@@ -5,6 +5,8 @@ import { GraphQLError } from 'graphql';
 import { PubSub, withFilter } from 'graphql-subscriptions';
 import onlineUsers from '../utils/onlineUsers.js';
 
+import jwt from 'jsonwebtoken';
+
 // create a PubSub instance to publish and listen for events
 const pubsub = new PubSub();
 
@@ -77,6 +79,45 @@ const resolvers = {
 		},
 		getOnlineUsers: async (_parent, _args, _context) => {
 			return onlineUsers;
+		},
+		verifyToken: async (_parent, { token }, context) => {
+
+			if (token !== context.cookies.jwt) {
+				// remove user from onlineUsers set
+				onlineUsers.delete(context.user._id);
+
+				pubsub.publish('LOGGED_OUT', {
+					loggedOut: context.user._id,
+				});
+
+				return {
+					token,
+					user: null,
+				};
+			}
+
+			const verifiedToken = jwt.verify(token, process.env.JWT_SECRET, {
+				maxAge: process.env.TOKEN_EXP,
+			});
+
+			if (verifiedToken) {
+				return {
+					token,
+					user: verifiedToken.data,
+				};
+			}
+			
+			// remove user from onlineUsers set
+			onlineUsers.delete(context.user._id);
+
+			pubsub.publish('LOGGED_OUT', {
+				loggedOut: context.user._id,
+			});
+
+			return {
+				token,
+				user: null,
+			};
 		},
 	},
 

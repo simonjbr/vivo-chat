@@ -37,6 +37,8 @@ const typeDefs = `#graphql
 		chat(participantOne: ID!, participantTwo: ID!): Chat
 
 		getOnlineUsers: [ID]
+
+		verifyToken(token: ID!): Auth
 	}
 
 	type Mutation {

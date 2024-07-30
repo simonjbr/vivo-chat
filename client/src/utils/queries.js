@@ -75,3 +75,15 @@ export const ONLINE_USERS = gql`
 		getOnlineUsers
 	}
 `;
+
+export const VERIFY_TOKEN = gql`
+	query VerifyToken($token: ID!) {
+		verifyToken(token: $token) {
+			token
+			user {
+				_id
+				username
+			}
+		}
+	}
+`;

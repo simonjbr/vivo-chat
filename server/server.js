@@ -18,6 +18,8 @@ import { makeExecutableSchema } from '@graphql-tools/schema';
 import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
 
+import jwt from 'jsonwebtoken';
+
 const PORT = process.env.PORT || 5000;
 const app = express();
 
@@ -55,8 +57,15 @@ const wsServer = new WebSocketServer({
 // provide context to subscription
 const getDynamicContext = async (ctx, msg, args) => {
 	if (ctx.connectionParams.authToken) {
-		const authUser = ctx.connectionParams.authToken;
-		return { authUser };
+		const authToken = ctx.connectionParams.authToken;
+
+		if (authToken) {
+			const { data } = jwt.verify(authToken, process.env.JWT_SECRET, {
+				maxAge: process.env.TOKEN_EXP,
+			});
+
+			return { authUser: data };
+		}
 	}
 
 	return { authUser: null };
