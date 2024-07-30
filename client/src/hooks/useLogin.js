@@ -28,7 +28,7 @@ const useLogin = ({ username, password }) => {
 				throw new Error(error);
 			}
 
-			localStorage.setItem('vivo-user', JSON.stringify(data.login.user));
+			localStorage.setItem('vivo-user', JSON.stringify(data.login.token));
 			setAuthUser(data.login.user);
 
 			toast.success(`Welcome back ${data.login.user.username}!`);
