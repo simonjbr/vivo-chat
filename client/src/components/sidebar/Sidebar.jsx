@@ -1,14 +1,35 @@
-import Chats from "./Chats";
-import LogoutButton from "./LogoutButton";
-import SearchInput from "./SearchInput";
+import { createContext, useContext, useState } from 'react';
+import Chats from './Chats';
+import LogoutButton from './LogoutButton';
+// import SearchInput from './SearchInput';
+import { FiChevronsLeft, FiChevronsRight } from 'react-icons/fi';
+
+const SidebarContext = createContext();
+
+export const useSidebarContext = () => useContext(SidebarContext);
 
 const Sidebar = () => {
+	const [expanded, setExpanded] = useState(true);
+
 	return (
 		<div className="border-r border-steel-blue p-4 flex flex-col">
-			<SearchInput />
-			<div className="divider px-3"></div>
-			<Chats />
-			<LogoutButton />
+			<SidebarContext.Provider value={{ expanded }}>
+				{/* <SearchInput /> */}
+				{/* {expanded ? <div className="divider px-3"></div> : ''} */}
+				<div className="overflow-auto">
+					<Chats />
+				</div>
+				<div className="flex flex-row justify-between mt-auto">
+					<LogoutButton />
+					<button onClick={() => setExpanded((current) => !current)}>
+						{expanded ? (
+							<FiChevronsLeft className="w-6 h-6 text-mint-green cursor-pointer hover:text-lime-green hover:text-shadow-sm" />
+						) : (
+							<FiChevronsRight className="w-6 h-6 text-mint-green cursor-pointer hover:text-lime-green hover:text-shadow-sm" />
+						)}
+					</button>
+				</div>
+			</SidebarContext.Provider>
 		</div>
 	);
 };

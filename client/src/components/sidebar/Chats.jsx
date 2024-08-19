@@ -11,13 +11,14 @@ const Chats = () => {
 
 	useEffect(() => {
 		if (!loading && chats.length > 0) {
-			const defaultChat = chats[0]._id !== authUser._id ? chats[0] : chats[1];
+			const defaultChat =
+				chats[0]._id !== authUser._id ? chats[0] : chats[1];
 			setSelectedChat(defaultChat);
 		}
 	}, [chats]);
 
 	return (
-		<div className="py-2 flex flex-col overflow-auto">
+		<div className="py-2 flex flex-col">
 			{loading ? (
 				<span className="loading loading-spinner mx-auto"></span>
 			) : (

@@ -37,7 +37,7 @@ const Messages = () => {
 	useEffect(() => {
 		if (!loading) {
 			setTimeout(() => {
-				lastMessageRef.current?.scrollIntoView({ behavior: 'smooth' });
+				lastMessageRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' });
 			}, 0);
 		}
 	}, [selectedChat, messages, loading]);
