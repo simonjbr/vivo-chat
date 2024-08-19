@@ -6,6 +6,7 @@ import { CREATE_CHAT } from '../../utils/mutations';
 import { useOnlineUserContext } from '../../context/OnlineUserContext';
 import { useNotificationContext } from '../../context/NotificationContext';
 import { useEffect } from 'react';
+import { useSidebarContext } from './Sidebar';
 
 const Chat = ({ chat, lastIndex }) => {
 	const { selectedChat, setSelectedChat } = useChatStore();
@@ -24,9 +25,10 @@ const Chat = ({ chat, lastIndex }) => {
 
 	const isOnline = onlineUsers.includes(chat._id);
 
-	
 	const { notifications, setNotifications } = useNotificationContext();
 	const hasNotification = notifications.includes(chat._id);
+
+	const { expanded } = useSidebarContext();
 
 	useEffect(() => {
 		// if chat with notification is selected remove from the notifications array
@@ -62,7 +64,9 @@ const Chat = ({ chat, lastIndex }) => {
 				className={`flex gap-2 items-center hover:bg-rich-black rounded p-2 py-1 cursor-pointer ${
 					isSelected ? 'bg-rich-black' : ''
 				} ${
-					hasNotification ? 'bg-steel-blue border-2 border-lime-green' : ''
+					hasNotification
+						? 'bg-steel-blue border-2 border-lime-green'
+						: ''
 				}`}
 				onClick={handleChatSelect}
 			>
@@ -72,7 +76,11 @@ const Chat = ({ chat, lastIndex }) => {
 					</div>
 				</div>
 
-				<div className="flex flex-col flex-1">
+				<div
+					className={`flex flex-col flex-1 ${
+						expanded ? '' : 'hidden'
+					}`}
+				>
 					<div className="flex gap-3 justify-between">
 						<p className="font-bold text-mint-green">
 							{chat.username}
