@@ -4,12 +4,15 @@ import useGetChats from '../../hooks/useGetChats';
 import toast from 'react-hot-toast';
 import useChatStore from '../../store/useChatStore';
 import { useAuthContext } from '../../context/AuthContext';
+import { useSidebarContext } from './Sidebar';
 
 const SearchInput = () => {
 	const [searchInput, setSearchInput] = useState('');
 	const { chats } = useGetChats();
 	const { setSelectedChat } = useChatStore();
 	const { authUser } = useAuthContext();
+
+	const { expanded } = useSidebarContext();
 
 	const handleSearchSubmit = (e) => {
 		e.preventDefault();
@@ -39,7 +42,10 @@ const SearchInput = () => {
 	};
 
 	return (
-		<form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
+		<form
+			onSubmit={handleSearchSubmit}
+			className={`flex items-center gap-2 ${expanded ? '' : 'hidden'}`}
+		>
 			<input
 				type="text"
 				name="searchInput"
