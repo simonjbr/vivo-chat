@@ -81,7 +81,6 @@ const resolvers = {
 			return onlineUsers;
 		},
 		verifyToken: async (_parent, { token }, context) => {
-
 			if (token !== context.cookies.jwt) {
 				// remove user from onlineUsers set
 				onlineUsers.delete(context.user._id);
@@ -106,7 +105,7 @@ const resolvers = {
 					user: verifiedToken.data,
 				};
 			}
-			
+
 			// remove user from onlineUsers set
 			onlineUsers.delete(context.user._id);
 
@@ -293,6 +292,15 @@ const resolvers = {
 
 			return await chat.populate('participants');
 		},
+		isTypingMutation: async (
+			_parent,
+			{ receiverId, senderId, isTyping },
+			context
+		) => {
+			pubsub.publish('IS_TYPING', {
+				isTypingSub: { senderId, receiverId, isTyping },
+			});
+		},
 	},
 	Message: {
 		senderId: async (parent) => {
@@ -308,10 +316,6 @@ const resolvers = {
 			subscribe: withFilter(
 				() => pubsub.asyncIterator(['NEW_MESSAGE']),
 				(payload, _variables, context) => {
-					// console.log('payload: ', payload);
-					// console.log('variables: ', variables);
-					// console.log('context: ', context);
-
 					if (!context.authUser) {
 						console.log(`No authUser in subscription context`);
 						return false;
@@ -333,6 +337,21 @@ const resolvers = {
 		},
 		signedUp: {
 			subscribe: () => pubsub.asyncIterator(['SIGNED_UP']),
+		},
+		isTypingSub: {
+			subscribe: withFilter(
+				() => pubsub.asyncIterator(['IS_TYPING']),
+				(payload, _variables, context) => {
+					if (!context.authUser) {
+						console.log(`No authUser in subscription context`);
+						return false;
+					}
+
+					return (
+						payload.isTypingSub.receiverId === context.authUser._id
+					);
+				}
+			),
 		},
 	},
 };
