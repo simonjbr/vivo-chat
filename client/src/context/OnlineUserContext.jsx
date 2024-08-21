@@ -15,6 +15,8 @@ export const OnlineUserContextProvider = ({ children }) => {
 		if (data) {
 			setOnlineUsers(data.getOnlineUsers);
 		}
+
+		return () => setOnlineUsers([]);
 	}, [data]);
 
 	useEffect(() => {
