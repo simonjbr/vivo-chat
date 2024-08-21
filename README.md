@@ -55,6 +55,8 @@ Deployed screenshot:
 
 [Daisy UI](https://daisyui.com/)
 
+[Vite](https://vitejs.dev/)
+
 [bcrypt](https://www.npmjs.com/package/bcrypt)
 
 [cookie-parser](https://www.npmjs.com/package/cookie-parser)
@@ -68,6 +70,8 @@ Deployed screenshot:
 [React Icons](https://react-icons.github.io/react-icons/)
 
 [Zustand](https://zustand-demo.pmnd.rs/)
+
+[Robohash](https://robohash.org/)
 
 [Day.js](https://day.js.org/)
 

@@ -70,7 +70,7 @@ const MessageInput = () => {
 					value={messageInput}
 					onChange={(e) => handleInputChange(e.target.value)}
 					onFocus={(e) => handleInputChange(e.target.value)}
-					className="border text-sm rounded-lg block w-full p-2.5 bg-new-slate focus:bg-rich-black"
+					className="border text-sm rounded-lg block w-full p-2.5 bg-new-slate focus:bg-rich-black text-white"
 				/>
 				<button
 					type="submit"
