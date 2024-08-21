@@ -33,7 +33,7 @@ const MessageInput = () => {
 			});
 		}
 
-		if (messageInput.length > 0 && value.length === 0) {
+		if (value.length === 0) {
 			await isTypingMutation({
 				variables: {
 					senderId: authUser._id,
@@ -69,6 +69,7 @@ const MessageInput = () => {
 					name="messageInput"
 					value={messageInput}
 					onChange={(e) => handleInputChange(e.target.value)}
+					onFocus={(e) => handleInputChange(e.target.value)}
 					className="border text-sm rounded-lg block w-full p-2.5 bg-new-slate focus:bg-rich-black"
 				/>
 				<button
