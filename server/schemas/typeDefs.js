@@ -27,6 +27,12 @@ const typeDefs = `#graphql
 		user: User
 	}
 
+	type IsTypingIndicator {
+		senderId: ID!
+		receiverId: ID!
+		isTyping: Boolean!
+	}
+
 	type Query {
 		users: [User]!
 		user(userId: ID!): User
@@ -48,6 +54,8 @@ const typeDefs = `#graphql
 
 		sendMessage(receiverId: ID!, content: String!, senderId: ID): Message
 		createChat(participantOne: ID!, participantTwo: ID!): Chat
+		
+		isTypingMutation(receiverId: ID!, senderId: ID!, isTyping: Boolean!): Boolean
 	}
 
 	type Subscription {
@@ -55,6 +63,7 @@ const typeDefs = `#graphql
 		loggedIn: ID
 		loggedOut: ID
 		signedUp: User
+		isTypingSub: IsTypingIndicator
 	}
 `;
 
