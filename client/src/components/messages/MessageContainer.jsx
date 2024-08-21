@@ -14,7 +14,7 @@ const MessageContainer = () => {
 	}, [setSelectedChat]);
 
 	return (
-		<div className="flex flex-col w-full">
+		<div className="flex flex-col w-full static">
 			{selectedChat ? (
 				<>
 					<div className="bg-tea-green px-4 py-2 mb-2">

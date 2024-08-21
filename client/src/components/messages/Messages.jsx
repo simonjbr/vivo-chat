@@ -6,9 +6,11 @@ import { useEffect, useRef, useState } from 'react';
 import MessageSkeleton from '../skeleton/MessageSkeleton';
 import { useAuthContext } from '../../context/AuthContext';
 import { useSubscription } from '@apollo/client';
-import { NEW_MESSAGE } from '../../utils/subscriptions';
-import messagePopAlert from '../../assets/mixkit-message-pop-alert-2354.mp3';
+import { IS_TYPING_SUB, NEW_MESSAGE } from '../../utils/subscriptions';
+import messagePopAlert from '../../assets/happy-pop-3-185288.mp3';
+import typingPopAlert from '../../assets/multi-pop-1-188165.mp3';
 import { useNotificationContext } from '../../context/NotificationContext';
+import { TiMessageTyping } from 'react-icons/ti';
 
 const Messages = () => {
 	const { selectedChat } = useChatStore();
@@ -30,6 +32,30 @@ const Messages = () => {
 		},
 	});
 
+	const [typingIndicator, setTypingIndicator] = useState(false);
+
+	const isTypingSubscription = useSubscription(IS_TYPING_SUB);
+
+	useEffect(() => {
+		if (!isTypingSubscription.loading && isTypingSubscription.data) {
+			if (
+				selectedChat._id === isTypingSubscription.data.isTypingSub.senderId
+			) {
+				setTypingIndicator(
+					isTypingSubscription.data.isTypingSub.isTyping
+				);
+
+				if (isTypingSubscription.data.isTypingSub.isTyping) {
+					const sound = new Audio(typingPopAlert);
+					sound.play();
+				}
+			}
+
+		}
+
+		return () => setTypingIndicator(false);
+	}, [isTypingSubscription, selectedChat]);
+
 	useEffect(() => {
 		refetch();
 	}, [selectedChat]);
@@ -37,7 +63,11 @@ const Messages = () => {
 	useEffect(() => {
 		if (!loading) {
 			setTimeout(() => {
-				lastMessageRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'start' });
+				lastMessageRef.current?.scrollIntoView({
+					behavior: 'smooth',
+					block: 'start',
+					inline: 'start',
+				});
 			}, 0);
 		}
 	}, [selectedChat, messages, loading]);
@@ -73,6 +103,7 @@ const Messages = () => {
 				sound.play();
 
 				setMessages([...messages, newMessage]);
+				setTypingIndicator(false);
 				return;
 			}
 
@@ -84,7 +115,7 @@ const Messages = () => {
 	}, [subscription]);
 
 	return (
-		<div className="px-4 flex-1 overflow-auto">
+		<div className="px-4 flex-1 overflow-auto relative">
 			{loading ? (
 				[...Array(2)].map((_, index) => <MessageSkeleton key={index} />)
 			) : messages.length === 0 ? (
@@ -96,6 +127,17 @@ const Messages = () => {
 					</div>
 				))
 			)}
+
+			<div className="sticky bottom-0 left-5">
+				<TiMessageTyping
+					size={typingIndicator ? 30 : 0}
+					className={`text-lime-green transition-all ${
+						typingIndicator
+							? 'opacity-100 animate-bounce'
+							: 'opacity-0'
+					}`}
+				/>
+			</div>
 		</div>
 	);
 };

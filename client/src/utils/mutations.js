@@ -88,3 +88,17 @@ export const CREATE_CHAT = gql`
 		}
 	}
 `;
+
+export const IS_TYPING_MUTATION = gql`
+	mutation IsTypingMutation(
+		$receiverId: ID!
+		$senderId: ID!
+		$isTyping: Boolean!
+	) {
+		isTypingMutation(
+			receiverId: $receiverId
+			senderId: $senderId
+			isTyping: $isTyping
+		)
+	}
+`;
