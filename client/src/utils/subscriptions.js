@@ -43,3 +43,13 @@ export const SIGNED_UP = gql`
 		}
 	}
 `;
+
+export const IS_TYPING_SUB = gql`
+	subscription IsTypingSub {
+		isTypingSub {
+			senderId
+			receiverId
+			isTyping
+		}
+	}
+`;
