@@ -1,8 +1,9 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import Chats from './Chats';
 import LogoutButton from './LogoutButton';
 // import SearchInput from './SearchInput';
 import { FiChevronsLeft, FiChevronsRight } from 'react-icons/fi';
+import { useOnlineUserContext } from '../../context/OnlineUserContext';
 
 const SidebarContext = createContext();
 
@@ -10,6 +11,11 @@ export const useSidebarContext = () => useContext(SidebarContext);
 
 const Sidebar = () => {
 	const [expanded, setExpanded] = useState(true);
+	const {refetch} = useOnlineUserContext();
+
+	useEffect(() => {
+		refetch();
+	}, [])
 
 	return (
 		<div className="border-r border-steel-blue p-4 flex flex-col">

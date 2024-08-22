@@ -9,7 +9,7 @@ export const useOnlineUserContext = () => useContext(OnlineUserContext);
 
 export const OnlineUserContextProvider = ({ children }) => {
 	const [onlineUsers, setOnlineUsers] = useState([]);
-	const { subscribeToMore, data } = useQuery(ONLINE_USERS);
+	const { subscribeToMore, data, refetch } = useQuery(ONLINE_USERS);
 
 	useEffect(() => {
 		if (data) {
@@ -55,7 +55,7 @@ export const OnlineUserContextProvider = ({ children }) => {
 	}, []);
 
 	return (
-		<OnlineUserContext.Provider value={{ onlineUsers }}>
+		<OnlineUserContext.Provider value={{ onlineUsers, refetch }}>
 			{children}
 		</OnlineUserContext.Provider>
 	);

@@ -317,7 +317,9 @@ const resolvers = {
 				() => pubsub.asyncIterator(['NEW_MESSAGE']),
 				(payload, _variables, context) => {
 					if (!context.authUser) {
-						console.log(`No authUser in subscription context`);
+						console.log(
+							`newMessage: No authUser in subscription context`
+						);
 						return false;
 					}
 
@@ -343,7 +345,9 @@ const resolvers = {
 				() => pubsub.asyncIterator(['IS_TYPING']),
 				(payload, _variables, context) => {
 					if (!context.authUser) {
-						console.log(`No authUser in subscription context`);
+						console.log(
+							`IsTypingSub: No authUser in subscription context`
+						);
 						return false;
 					}
 

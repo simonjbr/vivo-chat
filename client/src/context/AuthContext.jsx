@@ -11,7 +11,7 @@ export const useAuthContext = () => {
 export const AuthProvider = ({ children }) => {
 	const { data } = useQuery(VERIFY_TOKEN, {
 		variables: {
-			token: JSON.parse(localStorage.getItem('vivo-user')) || null,
+			token: JSON.parse(localStorage.getItem('vivo-user')) || '',
 		},
 	});
 
@@ -27,9 +27,8 @@ export const AuthProvider = ({ children }) => {
 
 	}, [data]);
 
-	const [authUser, setAuthUser] = useState(
-		data?.verifyToken.user || null
-	);
+	const [authUser, setAuthUser] = useState(data?.verifyToken.user || '');
+
 	return (
 		<AuthContext.Provider value={{ authUser, setAuthUser }}>
 			{children}
