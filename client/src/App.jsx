@@ -10,7 +10,7 @@ function App() {
 	const { authUser } = useAuthContext();
 
 	return (
-		<div className=" bg-gradient-to-tr from-rich-black to-new-slate p-4 min-h-[100svh] flex items-center justify-center">
+		<div className=" bg-gradient-to-tr from-rich-black to-new-slate p-4 min-h-[100dvh] flex items-center justify-center">
 			<Routes>
 				<Route
 					path="/"
