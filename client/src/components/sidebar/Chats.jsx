@@ -1,25 +1,18 @@
 import useGetChats from '../../hooks/useGetChats';
 import Chat from './Chat';
 import { useAuthContext } from '../../context/AuthContext';
-// import useChatStore from '../../store/useChatStore';
 import { useEffect, useState } from 'react';
 import { useOnlineUserContext } from '../../context/OnlineUserContext';
 
 const Chats = () => {
 	const { loading, chats } = useGetChats();
 	const { authUser } = useAuthContext();
-	// const { setSelectedChat } = useChatStore();
 	const { onlineUsers } = useOnlineUserContext();
 	const [onlineChats, setOnlineChats] = useState([]);
 	const [offlineChats, setOfflineChats] = useState([]);
 
 	useEffect(() => {
 		if (!loading && chats.length > 0) {
-
-			// const defaultChat =
-			// 	chats[0]._id !== authUser._id ? chats[0] : chats[1];
-			// setSelectedChat(defaultChat);
-
 			sortByOnlineStatus(chats);
 		}
 	}, [chats, onlineUsers]);
