@@ -62,7 +62,11 @@ const MessageInput = () => {
 		}
 	};
 	return (
-		<form className="px-4 my-3" onSubmit={handleMessageSubmit}>
+		<form
+			className="px-4 my-3"
+			onSubmit={handleMessageSubmit}
+			autoComplete="off"
+		>
 			<div className="w-full flex">
 				<input
 					type="text"
