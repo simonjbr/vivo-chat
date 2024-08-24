@@ -1,8 +1,4 @@
-import { useMutation, useQuery } from '@apollo/client';
-import { useAuthContext } from '../../context/AuthContext';
 import useChatStore from '../../store/useChatStore';
-import { CHAT } from '../../utils/queries';
-import { CREATE_CHAT } from '../../utils/mutations';
 import { useOnlineUserContext } from '../../context/OnlineUserContext';
 import { useNotificationContext } from '../../context/NotificationContext';
 import { useEffect } from 'react';
@@ -10,17 +6,7 @@ import { useSidebarContext } from './Sidebar';
 
 const Chat = ({ chat, lastIndex }) => {
 	const { selectedChat, setSelectedChat } = useChatStore();
-	const { authUser } = useAuthContext();
 	const isSelected = selectedChat?._id === chat._id;
-	const { data, error } = useQuery(CHAT, {
-		variables: {
-			participantOne: authUser._id,
-			participantTwo: chat._id,
-		},
-	});
-	const [createChat] = useMutation(CREATE_CHAT, {
-		refetchQueries: [CHAT, 'Chat'],
-	});
 	const { onlineUsers } = useOnlineUserContext();
 
 	const isOnline = onlineUsers.includes(chat._id);
@@ -42,20 +28,6 @@ const Chat = ({ chat, lastIndex }) => {
 
 	const handleChatSelect = async () => {
 		setSelectedChat(chat);
-		if (data) {
-			return;
-		}
-		if (error && error.message.toString() === 'No such chat exists') {
-			const { error: createError } = await createChat({
-				variables: {
-					participantOne: authUser._id,
-					participantTwo: chat._id,
-				},
-			});
-			if (createError) {
-				console.log(createError.message);
-			}
-		}
 	};
 
 	return (
