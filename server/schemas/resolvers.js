@@ -35,10 +35,22 @@ const resolvers = {
 			}
 
 			// try find chat with sender and receiver as participants
+			// const chat = await Chat.findOne({
+			// 	participants: {
+			// 		$all: [senderId, receiverId],
+			// 	},
+			// }).populate('messages');
 			const chat = await Chat.findOne({
-				participants: {
-					$all: [senderId, receiverId],
-				},
+				$or: [
+					{
+						participantOne: senderId,
+						participantTwo: receiverId,
+					},
+					{
+						participantOne: receiverId,
+						participantTwo: senderId,
+					},
+				],
 			}).populate('messages');
 
 			// if no chat found return empty array
@@ -49,6 +61,7 @@ const resolvers = {
 			// otherwise return chat's messages array
 			return chat.messages;
 		},
+		// refactor to determine if there are notifications
 		chats: async (_parent, _args, context) => {
 			const chats = await Chat.find({
 				// participants: {
@@ -63,12 +76,24 @@ const resolvers = {
 			return chats;
 		},
 		chat: async (_parent, { participantOne, participantTwo }, _context) => {
+			// const chat = await Chat.findOne({
+			// 	participants: {
+			// 		$all: [participantOne, participantTwo],
+			// 	},
+			// })
 			const chat = await Chat.findOne({
-				participants: {
-					$all: [participantOne, participantTwo],
-				},
+				$or: [
+					{
+						participantOne: participantOne,
+						participantTwo: participantTwo,
+					},
+					{
+						participantOne: participantTwo,
+						participantTwo: participantOne,
+					},
+				],
 			})
-				.populate('participants')
+				.populate(['participantOne', 'participantTwo'])
 				.populate('messages');
 
 			if (!chat) {
@@ -219,16 +244,32 @@ const resolvers = {
 			}
 
 			// try find Chat with sender and receiver as participants
+			// let chat = await Chat.findOne({
+			// 	participants: {
+			// 		$all: [senderId, receiverId],
+			// 	},
+			// });
 			let chat = await Chat.findOne({
-				participants: {
-					$all: [senderId, receiverId],
-				},
+				$or: [
+					{
+						participantOne: senderId,
+						participantTwo: receiverId,
+					},
+					{
+						participantOne: receiverId,
+						participantTwo: senderId,
+					},
+				],
 			});
 
 			// if chat doesn't exist create one
 			if (!chat) {
+				// chat = await Chat.create({
+				// 	participants: [senderId, receiverId],
+				// });
 				chat = await Chat.create({
-					participants: [senderId, receiverId],
+					participantOne: senderId,
+					participantTwo: receiverId,
 				});
 			}
 
@@ -270,10 +311,22 @@ const resolvers = {
 			}
 
 			// try find an existing Chat with specified participants
-			let existingChat = await Chat.findOne({
-				participants: {
-					$all: [participantOne, participantTwo],
-				},
+			// let existingChat = await Chat.findOne({
+			// 	participants: {
+			// 		$all: [participantOne, participantTwo],
+			// 	},
+			// });
+			const existingChat = await Chat.findOne({
+				$or: [
+					{
+						participantOne: participantOne,
+						participantTwo: participantTwo,
+					},
+					{
+						participantOne: participantTwo,
+						participantTwo: participantOne,
+					},
+				],
 			});
 
 			if (existingChat) {
@@ -282,15 +335,19 @@ const resolvers = {
 				);
 			}
 
+			// const chat = await Chat.create({
+			// 	participants: [participantOne, participantTwo],
+			// });
 			const chat = await Chat.create({
-				participants: [participantOne, participantTwo],
+				participantOne: participantOne,
+				participantTwo: participantTwo,
 			});
 
 			if (!chat) {
 				throw new GraphQLError('Failed to create Chat');
 			}
 
-			return await chat.populate('participants');
+			return await chat.populate(['participantOne', 'participantTwo']);
 		},
 		isTypingMutation: async (
 			_parent,

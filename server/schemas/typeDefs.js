@@ -17,6 +17,8 @@ const typeDefs = `#graphql
 
 	type Chat {
 		_id: ID!
+		participantOne: User!
+		participantTwo: User!
 		participants: [User!]!
 		messages: [Message!]!
 		# timestamps
