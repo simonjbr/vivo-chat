@@ -50,6 +50,14 @@ export const CHAT = gql`
 	query Chat($participantOne: ID!, $participantTwo: ID!) {
 		chat(participantOne: $participantOne, participantTwo: $participantTwo) {
 			_id
+			participantOne {
+				_id
+				username
+			}
+			participantTwo {
+				_id
+				username
+			}
 			participants {
 				_id
 				username
