@@ -62,6 +62,8 @@ export const CHAT = gql`
 				_id
 				username
 			}
+			lastSeenByOne
+			lastSeenByTwo
 			messages {
 				_id
 				senderId {
