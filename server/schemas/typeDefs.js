@@ -19,6 +19,8 @@ const typeDefs = `#graphql
 		_id: ID!
 		participantOne: User!
 		participantTwo: User!
+		lastSeenByOne: String!
+		lastSeenByTwo: String!
 		participants: [User!]!
 		messages: [Message!]!
 		# timestamps

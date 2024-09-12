@@ -18,6 +18,14 @@ const chatSchema = new mongoose.Schema(
 			ref: 'User',
 			required: true,
 		},
+		lastSeenByOne: {
+			type: Date,
+			default: 0,
+		},
+		lastSeenByTwo: {
+			type: Date,
+			default: 0,
+		},
 		messages: [
 			{
 				type: mongoose.Types.ObjectId,
