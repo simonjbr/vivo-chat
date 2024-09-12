@@ -75,7 +75,7 @@ const resolvers = {
 
 			return chats;
 		},
-		chat: async (_parent, { participantOne, participantTwo }, _context) => {
+		chat: async (_parent, { participantOne, participantTwo }, context) => {
 			// const chat = await Chat.findOne({
 			// 	participants: {
 			// 		$all: [participantOne, participantTwo],
@@ -99,6 +99,17 @@ const resolvers = {
 			if (!chat) {
 				throw new GraphQLError('No such chat exists');
 			}
+
+			// update lastSeenBy timestamp for appropriate user
+			if (chat.participantOne._id.toString() === context.user._id) {
+				chat.lastSeenByOne = new Date().toString();
+			} else if (
+				chat.participantTwo._id.toString() === context.user._id
+			) {
+				chat.lastSeenByTwo = new Date().toString();
+			}
+
+			await chat.save();
 
 			return chat;
 		},
