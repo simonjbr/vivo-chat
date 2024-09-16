@@ -64,10 +64,17 @@ const resolvers = {
 		// refactor to determine if there are notifications
 		chats: async (_parent, _args, context) => {
 			const chats = await Chat.find({
-				// participants: {
-				// 	$in: context.user._id,
-				// },
-			}).populate('participants');
+				$or: [
+					{
+						participantOne: context.user._id,
+					},
+					{
+						participantTwo: context.user._id,
+					},
+				],
+			})
+				.populate(['participantOne', 'participantTwo'])
+				.populate('messages');
 
 			if (!chats) {
 				throw new GraphQLError('Could not find any chats');
@@ -76,11 +83,6 @@ const resolvers = {
 			return chats;
 		},
 		chat: async (_parent, { participantOne, participantTwo }, context) => {
-			// const chat = await Chat.findOne({
-			// 	participants: {
-			// 		$all: [participantOne, participantTwo],
-			// 	},
-			// })
 			const chat = await Chat.findOne({
 				$or: [
 					{

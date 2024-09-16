@@ -2,12 +2,6 @@ import mongoose from 'mongoose';
 
 const chatSchema = new mongoose.Schema(
 	{
-		// participants: [
-		// 	{
-		// 		type: mongoose.Types.ObjectId,
-		// 		ref: 'User',
-		// 	},
-		// ],
 		participantOne: {
 			type: mongoose.Types.ObjectId,
 			ref: 'User',
@@ -42,9 +36,10 @@ const chatSchema = new mongoose.Schema(
 	}
 );
 
+// virtual to produce an array made up of the two participants
 chatSchema.virtual('participants').get(function () {
 	return [this.participantOne, this.participantTwo];
-})
+});
 
 const Chat = mongoose.model('Chat', chatSchema);
 
