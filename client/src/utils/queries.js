@@ -37,10 +37,29 @@ export const CHATS = gql`
 	query Chats {
 		chats {
 			_id
-			participants {
+			participantOne {
 				_id
 				username
 				avatar
+			}
+			participantTwo {
+				_id
+				username
+				avatar
+			}
+			lastSeenByOne
+			lastSeenByTwo
+			messages {
+				_id
+				senderId {
+					_id
+					username
+				}
+				receiverId {
+					_id
+					username
+				}
+				createdAt
 			}
 		}
 	}
