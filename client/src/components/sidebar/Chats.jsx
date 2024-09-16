@@ -50,7 +50,11 @@ const Chats = () => {
 							''
 						);
 					})}
-					{onlineChats.length > 0 ? <div className="divider my-0 py-0 h-1 divider-success" /> : ''}
+					{onlineChats.length > 0 ? (
+						<div className="divider my-0 py-0 h-1 divider-success" />
+					) : (
+						''
+					)}
 					{offlineChats.map((chat, index) => {
 						return authUser._id !== chat._id ? (
 							<Chat
