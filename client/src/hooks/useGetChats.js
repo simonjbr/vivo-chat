@@ -1,6 +1,6 @@
 import { useQuery } from '@apollo/client';
 import { useEffect, useState } from 'react';
-import { USERS } from '../utils/queries';
+import { CHATS } from '../utils/queries';
 import toast from 'react-hot-toast';
 import { SIGNED_UP } from '../utils/subscriptions';
 
@@ -12,7 +12,7 @@ const useGetChats = () => {
 		data,
 		loading: loadingQuery,
 		subscribeToMore,
-	} = useQuery(USERS);
+	} = useQuery(CHATS);
 
 	useEffect(() => {
 		const getChats = () => {
@@ -28,7 +28,7 @@ const useGetChats = () => {
 					throw new Error(error);
 				}
 
-				setChats(data?.users || []);
+				setChats(data?.chats || []);
 			} catch (error) {
 				toast.error(error);
 			} finally {
