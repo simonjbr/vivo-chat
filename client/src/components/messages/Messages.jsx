@@ -123,7 +123,7 @@ const Messages = () => {
 			) : (
 				messages.map((message) => (
 					<div key={message._id} ref={lastMessageRef}>
-						<Message message={message} />
+						<Message message={message} lastSeenByReceiver={selectedChat.lastSeenByReceiver} />
 					</div>
 				))
 			)}
