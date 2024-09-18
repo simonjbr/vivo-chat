@@ -9,11 +9,13 @@ const Chat = ({ chat, lastIndex }) => {
 	const { selectedChat, setSelectedChat } = useChatStore();
 	const { authUser } = useAuthContext();
 	const { onlineUsers } = useOnlineUserContext();
-	// const isParticipantOne = chat.participantOne._id === authUser._id;
-	const participant =
-		chat.participantOne._id === authUser._id
-			? chat.participantTwo
-			: chat.participantOne;
+	const isParticipantOne = chat.participantOne._id === authUser._id;
+	const participant = isParticipantOne
+		? chat.participantTwo
+		: chat.participantOne;
+	const lastSeenByReceiver = isParticipantOne
+		? chat.lastSeenByTwo
+		: chat.lastSeenByOne;
 	// const chatId = isParticipantOne
 	// 	? chat.participantTwo._id
 	// 	: chat.participantOne._id;
@@ -42,7 +44,10 @@ const Chat = ({ chat, lastIndex }) => {
 		// isParticipantOne
 		// 	? setSelectedChat(chat.participantTwo)
 		// 	: setSelectedChat(chat.participantOne);
-		setSelectedChat(participant);
+		setSelectedChat({
+			...participant,
+			lastSeenByReceiver,
+		});
 	};
 
 	return (
