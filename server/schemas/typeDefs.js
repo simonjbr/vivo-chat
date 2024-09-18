@@ -60,6 +60,8 @@ const typeDefs = `#graphql
 		createChat(participantOne: ID!, participantTwo: ID!): Chat
 		
 		isTypingMutation(receiverId: ID!, senderId: ID!, isTyping: Boolean!): Boolean
+
+		updateLastSeen(chatId: ID!): Boolean
 	}
 
 	type Subscription {

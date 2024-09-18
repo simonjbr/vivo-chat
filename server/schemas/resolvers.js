@@ -308,6 +308,15 @@ const resolvers = {
 					senderId,
 				},
 			});
+			
+			// update lastSeenBy timestamp for appropriate user
+			if (chat.participantOne._id.toString() === context.user._id) {
+				chat.lastSeenByOne = new Date().toString();
+			} else if (
+				chat.participantTwo._id.toString() === context.user._id
+			) {
+				chat.lastSeenByTwo = new Date().toString();
+			}
 
 			// save updated/new documents to db in parallel
 			await Promise.all([chat.save(), newMessage.save()]);
@@ -370,6 +379,22 @@ const resolvers = {
 			pubsub.publish('IS_TYPING', {
 				isTypingSub: { senderId, receiverId, isTyping },
 			});
+		},
+		updateLastSeen: async (_parent, { chatId }, context) => {
+			const chat = await Chat.findById(chatId);
+
+			// update lastSeenBy timestamp for appropriate user
+			if (chat.participantOne._id.toString() === context.user._id) {
+				chat.lastSeenByOne = new Date().toString();
+			} else if (
+				chat.participantTwo._id.toString() === context.user._id
+			) {
+				chat.lastSeenByTwo = new Date().toString();
+			}
+
+			await chat.save();
+
+			return true;
 		},
 	},
 	Message: {
