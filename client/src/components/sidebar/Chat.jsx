@@ -16,9 +16,9 @@ const Chat = ({ chat, lastIndex }) => {
 	const lastSeenByReceiver = isParticipantOne
 		? chat.lastSeenByTwo
 		: chat.lastSeenByOne;
-	// const chatId = isParticipantOne
-	// 	? chat.participantTwo._id
-	// 	: chat.participantOne._id;
+	const lastSeenByUser = isParticipantOne
+		? chat.lastSeenByOne
+		: chat.lastSeenByTwo;
 	const chatId = participant._id;
 
 	const isSelected = selectedChat?._id === chatId;
@@ -26,13 +26,18 @@ const Chat = ({ chat, lastIndex }) => {
 	const isOnline = onlineUsers.includes(chatId);
 
 	const { notifications, setNotifications } = useNotificationContext();
-	const hasNotification = notifications.includes(chatId);
+	// check notification context first
+	let hasNotification = notifications.includes(chatId);
+	// if none in notification context check if last seen by data reveals unread messages
+	if (!hasNotification) {
+		hasNotification = lastSeenByUser < chat.messages.at(-1).createdAt;
+	}
 
 	const { expanded } = useSidebarContext();
 
 	useEffect(() => {
 		// if chat with notification is selected remove from the notifications array
-		if (hasNotification && selectedChat._id === chatId) {
+		if (hasNotification && selectedChat?._id === chatId) {
 			const nextNotifications = notifications.filter(
 				(notification) => notification !== selectedChat._id
 			);
@@ -41,9 +46,6 @@ const Chat = ({ chat, lastIndex }) => {
 	}, [selectedChat]);
 
 	const handleChatSelect = async () => {
-		// isParticipantOne
-		// 	? setSelectedChat(chat.participantTwo)
-		// 	: setSelectedChat(chat.participantOne);
 		setSelectedChat({
 			...participant,
 			lastSeenByReceiver,
