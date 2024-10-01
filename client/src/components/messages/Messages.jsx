@@ -10,7 +10,7 @@ import { IS_TYPING_SUB, NEW_MESSAGE } from '../../utils/subscriptions';
 import messagePopAlert from '../../assets/happy-pop-3-185288.mp3';
 import typingPopAlert from '../../assets/multi-pop-1-188165.mp3';
 import { useNotificationContext } from '../../context/NotificationContext';
-import { TiMessageTyping } from 'react-icons/ti';
+import { TiMessages, TiMessageTyping } from 'react-icons/ti';
 
 const Messages = () => {
 	const { selectedChat } = useChatStore();
@@ -18,7 +18,7 @@ const Messages = () => {
 	const { data, error, loading, refetch } = useQuery(CHAT, {
 		variables: {
 			participantOne: authUser._id,
-			participantTwo: selectedChat._id,
+			participantTwo: selectedChat?._id,
 		},
 	});
 	const [messages, setMessages] = useState([]);
@@ -28,7 +28,7 @@ const Messages = () => {
 	const subscription = useSubscription(NEW_MESSAGE, {
 		variables: {
 			authUserId: authUser._id,
-			selectedChatId: selectedChat._id,
+			// selectedChatId: selectedChat?._id,
 		},
 	});
 
@@ -39,7 +39,8 @@ const Messages = () => {
 	useEffect(() => {
 		if (!isTypingSubscription.loading && isTypingSubscription.data) {
 			if (
-				selectedChat._id === isTypingSubscription.data.isTypingSub.senderId
+				selectedChat?._id ===
+				isTypingSubscription.data.isTypingSub.senderId
 			) {
 				setTypingIndicator(
 					isTypingSubscription.data.isTypingSub.isTyping
@@ -50,7 +51,6 @@ const Messages = () => {
 					sound.play();
 				}
 			}
-
 		}
 
 		return () => setTypingIndicator(false);
@@ -92,8 +92,8 @@ const Messages = () => {
 			const newMessage = subscription.data.newMessage;
 
 			if (
-				newMessage.senderId._id === selectedChat._id ||
-				newMessage.receiverId._id === selectedChat._id
+				newMessage.senderId._id === selectedChat?._id ||
+				newMessage.receiverId._id === selectedChat?._id
 			) {
 				// add shake animation flag
 				newMessage.shake = true;
@@ -107,38 +107,75 @@ const Messages = () => {
 				return;
 			}
 
+			console.log(selectedChat);
+
 			// if message sent to a non-selected chat add id to notifications array
-			if (!selectedChat || newMessage.senderId._id !== selectedChat._id) {
+			if (!selectedChat || newMessage.senderId._id !== selectedChat?._id) {
+				console.log(selectedChat);
 				setNotifications([...notifications, newMessage.senderId._id]);
 			}
 		}
 	}, [subscription]);
 
 	return (
-		<div className="px-4 flex-1 overflow-auto relative">
-			{loading ? (
-				[...Array(2)].map((_, index) => <MessageSkeleton key={index} />)
-			) : messages.length === 0 ? (
-				<p className="text-center">Send a message to start the chat</p>
-			) : (
-				messages.map((message) => (
-					<div key={message._id} ref={lastMessageRef}>
-						<Message message={message} lastSeenByReceiver={selectedChat.lastSeenByReceiver} />
-					</div>
-				))
-			)}
+		<>
+			{selectedChat ? (
+			<div className="bg-tea-green px-4 py-2 mb-2">
+				<span className="label-text text-new-slate">To:</span>{' '}
+				<span className="text-rich-black font-bold">
+					{selectedChat?.username}
+				</span>
+			</div>
 
-			<div className="sticky bottom-0 left-5">
-				<TiMessageTyping
-					size={typingIndicator ? 30 : 0}
-					className={`text-lime-green transition-all ${
-						typingIndicator
-							? 'opacity-100 animate-bounce'
-							: 'opacity-0'
-					}`}
-				/>
+			) : (<NoChatSelected />)}
+
+			<div className="px-4 flex-1 overflow-auto relative">
+				{loading ? (
+					[...Array(2)].map((_, index) => (
+						<MessageSkeleton key={index} />
+					))
+				) : messages.length === 0 ? (
+					<p className="text-center">
+						Send a message to start the chat
+					</p>
+				) : (
+					messages.map((message) => (
+						<div key={message._id} ref={lastMessageRef}>
+							<Message
+								message={message}
+								lastSeenByReceiver={
+									selectedChat.lastSeenByReceiver
+								}
+							/>
+						</div>
+					))
+				)}
+
+				<div className="sticky bottom-0 left-5">
+					<TiMessageTyping
+						size={typingIndicator ? 30 : 0}
+						className={`text-lime-green transition-all ${
+							typingIndicator
+								? 'opacity-100 animate-bounce'
+								: 'opacity-0'
+						}`}
+					/>
+				</div>
+			</div>
+		</>
+	);
+};
+export default Messages;
+
+const NoChatSelected = () => {
+	const { authUser } = useAuthContext();
+	return (
+		<div className="flex items-center justify-center w-full h-full">
+			<div className="px-4 text-center sm:text-lg md:text-xl text-mint-green font-semibold flex flex-col items-center gap-2">
+				<p>Welcome {authUser.username}</p>
+				<p>Select a chat to start messaging</p>
+				<TiMessages className="text-3xl md:text-6xl text-center" />
 			</div>
 		</div>
 	);
 };
-export default Messages;
