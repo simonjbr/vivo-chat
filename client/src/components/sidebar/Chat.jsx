@@ -30,7 +30,8 @@ const Chat = ({ chat, lastIndex }) => {
 	let hasNotification = notifications.includes(chatId);
 	// if none in notification context check if last seen by data reveals unread messages
 	if (!hasNotification) {
-		hasNotification = lastSeenByUser < chat.messages.at(-1).createdAt;
+		// if last mesage is not from authUser and createdAt is newer than lastSeenByUser it hasNotification
+		hasNotification = chat.messages.at(-1).senderId._id !== authUser._id && lastSeenByUser < chat.messages.at(-1).createdAt;
 	}
 
 	const { expanded } = useSidebarContext();
