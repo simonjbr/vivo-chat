@@ -22,7 +22,12 @@ const Chats = () => {
 		const offline = [];
 
 		chats.forEach((chat) => {
-			if (chat._id !== authUser._id && onlineUsers.includes(chat._id)) {
+			const isParticipantOne = chat.participantOne._id === authUser._id;
+			const participant = isParticipantOne
+				? chat.participantTwo
+				: chat.participantOne;
+
+			if (participant._id !== authUser._id && onlineUsers.includes(participant._id)) {
 				online.push(chat);
 			} else {
 				offline.push(chat);
