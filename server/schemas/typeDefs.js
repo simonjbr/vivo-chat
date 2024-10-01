@@ -65,7 +65,7 @@ const typeDefs = `#graphql
 	}
 
 	type Subscription {
-		newMessage(authUserId: ID!, selectedChatId: ID!): Message
+		newMessage(authUserId: ID!): Message
 		loggedIn: ID
 		loggedOut: ID
 		signedUp: User
