@@ -1,7 +1,6 @@
 import dayjs from 'dayjs';
 import { useAuthContext } from '../../context/AuthContext';
-import { TiTick, TiTickOutline } from "react-icons/ti";
-
+import { TiTick, TiTickOutline } from 'react-icons/ti';
 
 const Message = ({ message, lastSeenByReceiver }) => {
 	const { authUser } = useAuthContext();
@@ -26,7 +25,11 @@ const Message = ({ message, lastSeenByReceiver }) => {
 			</div>
 			<div className="chat-footer opacity-50 text-platinum text-xs flex gap-1 items-center">
 				{formattedTimestamp}
-				{message.createdAt > lastSeenByReceiver ? <TiTickOutline /> : <TiTick className='text-lime-green' />}
+				{isFromMe ? '' : (message.createdAt > lastSeenByReceiver ? (
+					<TiTickOutline />
+				) : (
+					<TiTick className="text-lime-green" />
+				))}
 			</div>
 		</div>
 	);
