@@ -39,10 +39,12 @@ const Chat = ({ user, lastIndex }) => {
 	}, [notifications]);
 
 	useEffect(() => {
-		if (!hasNotification && notificationsResponse.loading === false) {
-			if (notificationsResponse.data?.notifications.includes(user._id)) {
-				setHasNotification(true);
-			}
+		if (
+			!hasNotification &&
+			!notificationsResponse.loading &&
+			notificationsResponse.data?.notifications.includes(user._id)
+		) {
+			setHasNotification(true);
 		}
 	}, [notificationsResponse]);
 
