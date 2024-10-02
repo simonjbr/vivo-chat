@@ -104,7 +104,7 @@ export const IS_TYPING_MUTATION = gql`
 `;
 
 export const UPDATE_LAST_SEEN = gql`
-	mutation Mutation($chatId: ID!) {
-		updateLastSeen(chatId: $chatId)
+	mutation UpdateLastSeen($selectedChatId: ID!) {
+		updateLastSeen(selectedChatId: $selectedChatId)
 	}
 `;
