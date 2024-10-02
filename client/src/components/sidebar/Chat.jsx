@@ -1,14 +1,17 @@
 import useChatStore from '../../store/useChatStore';
 import { useOnlineUserContext } from '../../context/OnlineUserContext';
 import { useNotificationContext } from '../../context/NotificationContext';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useSidebarContext } from './Sidebar';
+import { useQuery } from '@apollo/client';
+import { NOTIFICATIONS } from '../../utils/queries';
 // import { useAuthContext } from '../../context/AuthContext';
 
 const Chat = ({ user, lastIndex }) => {
 	const { selectedChat, setSelectedChat } = useChatStore();
 	// const { authUser } = useAuthContext();
 	const { onlineUsers } = useOnlineUserContext();
+	const notificationsResponse = useQuery(NOTIFICATIONS);
 	// const isParticipantOne = chat.participantOne._id === authUser._id;
 	// const participant = isParticipantOne
 	// 	? chat.participantTwo
@@ -27,12 +30,25 @@ const Chat = ({ user, lastIndex }) => {
 
 	const { notifications, setNotifications } = useNotificationContext();
 	// check notification context first
-	let hasNotification = notifications.includes(user._id);
-	// if none in notification context check if last seen by data reveals unread messages
-	// if (!hasNotification) {
-	// 	// if last mesage is not from authUser and createdAt is newer than lastSeenByUser it hasNotification
-	// 	hasNotification = chat.messages.at(-1)?.senderId._id !== authUser._id && lastSeenByUser < chat.messages.at(-1)?.createdAt;
-	// }
+	const [hasNotification, setHasNotification] = useState(
+		notifications.includes(user._id)
+	);
+
+	useEffect(() => {
+		setHasNotification(notifications.includes(user._id));
+	}, [notifications]);
+
+	useEffect(() => {
+		if (!hasNotification && notificationsResponse.loading === false) {
+			if (notificationsResponse.data?.notifications.includes(user._id)) {
+				setHasNotification(true);
+			}
+		}
+	}, [notificationsResponse]);
+
+	useEffect(() => {
+		notificationsResponse.refetch();
+	}, []);
 
 	const { expanded } = useSidebarContext();
 
@@ -43,6 +59,7 @@ const Chat = ({ user, lastIndex }) => {
 				(notification) => notification !== selectedChat._id
 			);
 			setNotifications(nextNotifications);
+			setHasNotification(false);
 		}
 	}, [selectedChat]);
 
@@ -67,15 +84,7 @@ const Chat = ({ user, lastIndex }) => {
 			>
 				<div className={`avatar ${isOnline ? 'online' : ''}`}>
 					<div className="w-12 rounded-full">
-						<img
-							src={
-								// isParticipantOne
-								// 	? chat.participantTwo.avatar
-								// 	: chat.participantOne.avatar
-								user.avatar
-							}
-							alt="user avatar"
-						/>
+						<img src={user.avatar} alt="user avatar" />
 					</div>
 				</div>
 
@@ -86,12 +95,7 @@ const Chat = ({ user, lastIndex }) => {
 				>
 					<div className="flex gap-3 justify-between">
 						<p className="font-bold text-mint-green">
-							{
-								// isParticipantOne
-								// 	? chat.participantTwo.username
-								// 	: chat.participantOne.username
-								user.username
-							}
+							{user.username}
 						</p>
 						<span className="text-xl">
 							{hasNotification ? '!!!!!' : ':]'}
