@@ -3,42 +3,42 @@ import { useOnlineUserContext } from '../../context/OnlineUserContext';
 import { useNotificationContext } from '../../context/NotificationContext';
 import { useEffect } from 'react';
 import { useSidebarContext } from './Sidebar';
-import { useAuthContext } from '../../context/AuthContext';
+// import { useAuthContext } from '../../context/AuthContext';
 
-const Chat = ({ chat, lastIndex }) => {
+const Chat = ({ user, lastIndex }) => {
 	const { selectedChat, setSelectedChat } = useChatStore();
-	const { authUser } = useAuthContext();
+	// const { authUser } = useAuthContext();
 	const { onlineUsers } = useOnlineUserContext();
-	const isParticipantOne = chat.participantOne._id === authUser._id;
-	const participant = isParticipantOne
-		? chat.participantTwo
-		: chat.participantOne;
-	const lastSeenByReceiver = isParticipantOne
-		? chat.lastSeenByTwo
-		: chat.lastSeenByOne;
-	const lastSeenByUser = isParticipantOne
-		? chat.lastSeenByOne
-		: chat.lastSeenByTwo;
-	const chatId = participant._id;
+	// const isParticipantOne = chat.participantOne._id === authUser._id;
+	// const participant = isParticipantOne
+	// 	? chat.participantTwo
+	// 	: chat.participantOne;
+	// const lastSeenByReceiver = isParticipantOne
+	// 	? chat.lastSeenByTwo
+	// 	: chat.lastSeenByOne;
+	// const lastSeenByUser = isParticipantOne
+	// 	? chat.lastSeenByOne
+	// 	: chat.lastSeenByTwo;
+	// const chatId = participant._id;
 
-	const isSelected = selectedChat?._id === chatId;
+	const isSelected = selectedChat?._id === user._id;
 
-	const isOnline = onlineUsers.includes(chatId);
+	const isOnline = onlineUsers.includes(user._id);
 
 	const { notifications, setNotifications } = useNotificationContext();
 	// check notification context first
-	let hasNotification = notifications.includes(chatId);
+	let hasNotification = notifications.includes(user._id);
 	// if none in notification context check if last seen by data reveals unread messages
-	if (!hasNotification) {
-		// if last mesage is not from authUser and createdAt is newer than lastSeenByUser it hasNotification
-		hasNotification = chat.messages.at(-1).senderId._id !== authUser._id && lastSeenByUser < chat.messages.at(-1).createdAt;
-	}
+	// if (!hasNotification) {
+	// 	// if last mesage is not from authUser and createdAt is newer than lastSeenByUser it hasNotification
+	// 	hasNotification = chat.messages.at(-1)?.senderId._id !== authUser._id && lastSeenByUser < chat.messages.at(-1)?.createdAt;
+	// }
 
 	const { expanded } = useSidebarContext();
 
 	useEffect(() => {
 		// if chat with notification is selected remove from the notifications array
-		if (hasNotification && selectedChat?._id === chatId) {
+		if (hasNotification && selectedChat?._id === user._id) {
 			const nextNotifications = notifications.filter(
 				(notification) => notification !== selectedChat._id
 			);
@@ -48,8 +48,8 @@ const Chat = ({ chat, lastIndex }) => {
 
 	const handleChatSelect = async () => {
 		setSelectedChat({
-			...participant,
-			lastSeenByReceiver,
+			...user,
+			// lastSeenByReceiver,
 		});
 	};
 
@@ -72,7 +72,7 @@ const Chat = ({ chat, lastIndex }) => {
 								// isParticipantOne
 								// 	? chat.participantTwo.avatar
 								// 	: chat.participantOne.avatar
-								participant.avatar
+								user.avatar
 							}
 							alt="user avatar"
 						/>
@@ -90,7 +90,7 @@ const Chat = ({ chat, lastIndex }) => {
 								// isParticipantOne
 								// 	? chat.participantTwo.username
 								// 	: chat.participantOne.username
-								participant.username
+								user.username
 							}
 						</p>
 						<span className="text-xl">
