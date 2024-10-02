@@ -428,16 +428,32 @@ const resolvers = {
 				isTypingSub: { senderId, receiverId, isTyping },
 			});
 		},
-		updateLastSeen: async (_parent, { chatId }, context) => {
-			const chat = await Chat.findById(chatId);
+		updateLastSeen: async (_parent, { selectedChatId }, context) => {
+			const chat = await Chat.findOne({
+				$or: [
+					{
+						participantOne: selectedChatId,
+						participantTwo: context.user._id,
+					},
+					{
+						participantOne: context.user._id,
+						participantTwo: selectedChatId,
+					},
+				],
+			});
+
+			// create new dat object for updating lastSeenBy
+			const date = new Date();
+			// add 1 second to account for processing time
+			const updatedCreatedAt = date.setSeconds(date.getSeconds() + 1);
 
 			// update lastSeenBy timestamp for appropriate user
 			if (chat.participantOne._id.toString() === context.user._id) {
-				chat.lastSeenByOne = new Date().toString();
+				chat.lastSeenByOne = updatedCreatedAt.toString();
 			} else if (
 				chat.participantTwo._id.toString() === context.user._id
 			) {
-				chat.lastSeenByTwo = new Date().toString();
+				chat.lastSeenByTwo = updatedCreatedAt.toString();
 			}
 
 			await chat.save();

@@ -63,7 +63,7 @@ const typeDefs = `#graphql
 		
 		isTypingMutation(receiverId: ID!, senderId: ID!, isTyping: Boolean!): Boolean
 
-		updateLastSeen(chatId: ID!): Boolean
+		updateLastSeen(selectedChatId: ID!): Boolean
 	}
 
 	type Subscription {
