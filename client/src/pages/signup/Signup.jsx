@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import useSignup from '../../hooks/useSignup';
-import { useAuthContext } from '../../context/AuthContext';
 
 const Signup = () => {
 	const [formInputs, setFormInputs] = useState({
@@ -12,11 +11,6 @@ const Signup = () => {
 	});
 
 	const { loading, signup } = useSignup(formInputs);
-	const { authUser } = useAuthContext();
-
-	if (authUser) {
-		console.log(authUser._id);
-	}
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
