@@ -1,4 +1,4 @@
-import { useQuery } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import useChatStore from '../../store/useChatStore';
 import Message from './Message';
 import { CHAT } from '../../utils/queries';
@@ -11,6 +11,7 @@ import messagePopAlert from '../../assets/happy-pop-3-185288.mp3';
 import typingPopAlert from '../../assets/multi-pop-1-188165.mp3';
 import { useNotificationContext } from '../../context/NotificationContext';
 import { TiMessages, TiMessageTyping } from 'react-icons/ti';
+import { UPDATE_LAST_SEEN } from '../../utils/mutations';
 
 const Messages = () => {
 	const { selectedChat } = useChatStore();
@@ -33,8 +34,9 @@ const Messages = () => {
 	});
 
 	const [typingIndicator, setTypingIndicator] = useState(false);
-
 	const isTypingSubscription = useSubscription(IS_TYPING_SUB);
+
+	const [updateLastSeen] = useMutation(UPDATE_LAST_SEEN);
 
 	useEffect(() => {
 		if (!isTypingSubscription.loading && isTypingSubscription.data) {
@@ -104,11 +106,21 @@ const Messages = () => {
 
 				setMessages([...messages, newMessage]);
 				setTypingIndicator(false);
+
+				// update lastSeenBy
+				updateLastSeen({
+					variables: {
+						selectedChatId: selectedChat._id,
+					},
+				});
 				return;
 			}
 
 			// if message sent to a non-selected chat add id to notifications array
-			if (!selectedChat || newMessage.senderId._id !== selectedChat?._id) {
+			if (
+				!selectedChat ||
+				newMessage.senderId._id !== selectedChat?._id
+			) {
 				setNotifications([...notifications, newMessage.senderId._id]);
 			}
 		}
@@ -117,14 +129,15 @@ const Messages = () => {
 	return (
 		<>
 			{selectedChat ? (
-			<div className="bg-tea-green px-4 py-2 mb-2">
-				<span className="label-text text-new-slate">To:</span>{' '}
-				<span className="text-rich-black font-bold">
-					{selectedChat?.username}
-				</span>
-			</div>
-
-			) : (<NoChatSelected />)}
+				<div className="bg-tea-green px-4 py-2 mb-2">
+					<span className="label-text text-new-slate">To:</span>{' '}
+					<span className="text-rich-black font-bold">
+						{selectedChat?.username}
+					</span>
+				</div>
+			) : (
+				<NoChatSelected />
+			)}
 
 			<div className="px-4 flex-1 overflow-auto relative">
 				{loading ? (
