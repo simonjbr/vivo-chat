@@ -156,6 +156,54 @@ const resolvers = {
 				user: null,
 			};
 		},
+		notifications: async (
+			_parent,
+			{
+				/* userId */
+			},
+			context
+		) => {
+			const userId = context.user._id;
+			const chats = await Chat.find(
+				{
+					$or: [
+						{ participantOne: userId },
+						{ participantTwo: userId },
+					],
+				},
+				{
+					messages: {
+						$slice: -1,
+					},
+				}
+			).populate('messages');
+
+			const notifications = [];
+
+			chats.forEach((chat) => {
+				// console.log(chat.participantOne._id);
+				const userIsParticipantOne =
+					chat.participantOne._id.toString() === userId;
+				// const userParticipant = userIsParticipantOne
+				// 	? chat.participantOne
+				// 	: chat.participantTwo;
+				const otherParticipant = userIsParticipantOne
+					? chat.participantTwo
+					: chat.participantOne;
+				const userLastSeenBy = userIsParticipantOne
+					? chat.lastSeenByOne
+					: chat.lastSeenByTwo;
+
+				if (
+					chat.messages.at(-1)?.senderId._id.toString() !== userId &&
+					userLastSeenBy < chat.messages.at(-1)?.createdAt
+				) {
+					notifications.push(otherParticipant._id);
+				}
+			});
+
+			return notifications;
+		},
 	},
 
 	Mutation: {
@@ -308,7 +356,7 @@ const resolvers = {
 					senderId,
 				},
 			});
-			
+
 			// update lastSeenBy timestamp for appropriate user
 			if (chat.participantOne._id.toString() === context.user._id) {
 				chat.lastSeenByOne = new Date().toString();

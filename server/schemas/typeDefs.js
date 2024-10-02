@@ -49,6 +49,8 @@ const typeDefs = `#graphql
 		getOnlineUsers: [ID]
 
 		verifyToken(token: ID!): Auth
+
+		notifications: [ID]
 	}
 
 	type Mutation {
