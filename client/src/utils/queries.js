@@ -116,3 +116,9 @@ export const VERIFY_TOKEN = gql`
 		}
 	}
 `;
+
+export const NOTIFICATIONS = gql`
+	query Notifications {
+		notifications
+	}
+`;
