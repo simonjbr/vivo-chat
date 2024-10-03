@@ -244,6 +244,9 @@ const resolvers = {
 				loggedIn: user._id.toString(),
 			});
 
+			// add new user to onlineUsers set
+			onlineUsers.add(user._id.toString());
+
 			return { token, user };
 		},
 		login: async (_parent, { username, password }, context) => {
