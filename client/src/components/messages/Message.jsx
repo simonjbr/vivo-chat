@@ -25,11 +25,13 @@ const Message = ({ message, lastSeenByReceiver }) => {
 			</div>
 			<div className="chat-footer opacity-50 text-platinum text-xs flex gap-1 items-center">
 				{formattedTimestamp}
-				{isFromMe ? '' : (message.createdAt > lastSeenByReceiver ? (
+				{!isFromMe ? (
+					''
+				) : message.createdAt > lastSeenByReceiver ? (
 					<TiTickOutline />
 				) : (
 					<TiTick className="text-lime-green" />
-				))}
+				)}
 			</div>
 		</div>
 	);

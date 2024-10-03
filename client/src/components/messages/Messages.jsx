@@ -25,6 +25,11 @@ const Messages = () => {
 	const [messages, setMessages] = useState([]);
 	const lastMessageRef = useRef();
 	const { notifications, setNotifications } = useNotificationContext();
+	const [chat, setChat] = useState(null);
+	const lastSeenByReceiver =
+		authUser._id === chat?.participantOne._id
+			? chat?.lastSeenByTwo
+			: chat?.lastSeenByOne;
 
 	const subscription = useSubscription(NEW_MESSAGE, {
 		variables: {
@@ -86,6 +91,7 @@ const Messages = () => {
 		}
 		if (data?.chat) {
 			setMessages(data.chat.messages);
+			setChat(data.chat);
 		}
 	}, [data, error]);
 
@@ -153,9 +159,7 @@ const Messages = () => {
 						<div key={message._id} ref={lastMessageRef}>
 							<Message
 								message={message}
-								lastSeenByReceiver={
-									selectedChat.lastSeenByReceiver
-								}
+								lastSeenByReceiver={lastSeenByReceiver}
 							/>
 						</div>
 					))
