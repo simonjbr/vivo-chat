@@ -102,13 +102,27 @@ const resolvers = {
 				throw new GraphQLError('No such chat exists');
 			}
 
+			// create new date object for updating lastSeenBy
+			const date = new Date();
+			// add 1 second to account for processing time
+			const updatedCreatedAt = date.setSeconds(date.getSeconds() + 1);
+
+			// publish last seen updated to pubsub
+			pubsub.publish('LAST_SEEN_UPDATED_SUB', {
+				lastSeenUpdatedSub: {
+					senderId: participantTwo,
+					receiverId: participantOne,
+					lastSeen: updatedCreatedAt.toString(),
+				},
+			});
+
 			// update lastSeenBy timestamp for appropriate user
 			if (chat.participantOne._id.toString() === context.user._id) {
-				chat.lastSeenByOne = new Date().toString();
+				chat.lastSeenByOne = updatedCreatedAt.toString();
 			} else if (
 				chat.participantTwo._id.toString() === context.user._id
 			) {
-				chat.lastSeenByTwo = new Date().toString();
+				chat.lastSeenByTwo = updatedCreatedAt.toString();
 			}
 
 			await chat.save();
@@ -360,13 +374,18 @@ const resolvers = {
 				},
 			});
 
+			// create new dat object for updating lastSeenBy
+			const date = new Date();
+			// add 1 second to account for processing time
+			const updatedCreatedAt = date.setSeconds(date.getSeconds() + 1);
+
 			// update lastSeenBy timestamp for appropriate user
 			if (chat.participantOne._id.toString() === context.user._id) {
-				chat.lastSeenByOne = new Date().toString();
+				chat.lastSeenByOne = updatedCreatedAt.toString();
 			} else if (
 				chat.participantTwo._id.toString() === context.user._id
 			) {
-				chat.lastSeenByTwo = new Date().toString();
+				chat.lastSeenByTwo = updatedCreatedAt.toString();
 			}
 
 			// save updated/new documents to db in parallel
@@ -431,24 +450,33 @@ const resolvers = {
 				isTypingSub: { senderId, receiverId, isTyping },
 			});
 		},
-		updateLastSeen: async (_parent, { selectedChatId }, context) => {
+		updateLastSeen: async (_parent, { senderId, receiverId }, context) => {
 			const chat = await Chat.findOne({
 				$or: [
 					{
-						participantOne: selectedChatId,
-						participantTwo: context.user._id,
+						participantOne: senderId,
+						participantTwo: receiverId,
 					},
 					{
-						participantOne: context.user._id,
-						participantTwo: selectedChatId,
+						participantOne: receiverId,
+						participantTwo: senderId,
 					},
 				],
 			});
 
-			// create new dat object for updating lastSeenBy
+			// create new date object for updating lastSeenBy
 			const date = new Date();
 			// add 1 second to account for processing time
 			const updatedCreatedAt = date.setSeconds(date.getSeconds() + 1);
+
+			// publish last seen updated to pubsub
+			pubsub.publish('LAST_SEEN_UPDATED_SUB', {
+				lastSeenUpdatedSub: {
+					senderId,
+					receiverId,
+					lastSeen: updatedCreatedAt.toString(),
+				},
+			});
 
 			// update lastSeenBy timestamp for appropriate user
 			if (chat.participantOne._id.toString() === context.user._id) {
@@ -515,6 +543,24 @@ const resolvers = {
 
 					return (
 						payload.isTypingSub.receiverId === context.authUser._id
+					);
+				}
+			),
+		},
+		lastSeenUpdatedSub: {
+			subscribe: withFilter(
+				() => pubsub.asyncIterator(['LAST_SEEN_UPDATED_SUB']),
+				(payload, _variables, context) => {
+					if (!context.authUser) {
+						console.log(
+							`lastSeenUpdatedSub: No authUser in subscription context`
+						);
+						return false;
+					}
+
+					return (
+						payload.lastSeenUpdatedSub.senderId ===
+						context.authUser._id
 					);
 				}
 			),
