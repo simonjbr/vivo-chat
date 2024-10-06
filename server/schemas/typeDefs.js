@@ -37,6 +37,12 @@ const typeDefs = `#graphql
 		isTyping: Boolean!
 	}
 
+	type LastSeenType {
+		senderId: ID!
+		receiverId: ID!
+		lastSeen: String!
+	}
+
 	type Query {
 		users: [User]!
 		user(userId: ID!): User
@@ -63,7 +69,7 @@ const typeDefs = `#graphql
 		
 		isTypingMutation(receiverId: ID!, senderId: ID!, isTyping: Boolean!): Boolean
 
-		updateLastSeen(selectedChatId: ID!): Boolean
+		updateLastSeen(senderId: ID!, receiverId: ID!): Boolean
 	}
 
 	type Subscription {
@@ -72,6 +78,7 @@ const typeDefs = `#graphql
 		loggedOut: ID
 		signedUp: User
 		isTypingSub: IsTypingIndicator
+		lastSeenUpdatedSub: LastSeenType
 	}
 `;
 
