@@ -53,3 +53,13 @@ export const IS_TYPING_SUB = gql`
 		}
 	}
 `;
+
+export const LAST_SEEN_UPDATED_SUB = gql`
+	subscription LastSeenUpdatedSub {
+		lastSeenUpdatedSub {
+			senderId
+			receiverId
+			lastSeen
+		}
+	}
+`;
