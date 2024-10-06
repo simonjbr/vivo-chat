@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const NEW_MESSAGE = gql`
-	subscription NewMessage($authUserId: ID!, $selectedChatId: ID!) {
-		newMessage(authUserId: $authUserId, selectedChatId: $selectedChatId) {
+	subscription NewMessage($authUserId: ID!) {
+		newMessage(authUserId: $authUserId) {
 			senderId {
 				_id
 				username
@@ -50,6 +50,16 @@ export const IS_TYPING_SUB = gql`
 			senderId
 			receiverId
 			isTyping
+		}
+	}
+`;
+
+export const LAST_SEEN_UPDATED_SUB = gql`
+	subscription LastSeenUpdatedSub {
+		lastSeenUpdatedSub {
+			senderId
+			receiverId
+			lastSeen
 		}
 	}
 `;

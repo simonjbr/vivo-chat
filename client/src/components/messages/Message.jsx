@@ -1,12 +1,26 @@
 import dayjs from 'dayjs';
 import { useAuthContext } from '../../context/AuthContext';
+import { TiTick, TiTickOutline } from 'react-icons/ti';
+import { useEffect, useState } from 'react';
 
-const Message = ({ message }) => {
+const Message = ({ message, lastSeenByReceiver, lastSeenUpdatedSub }) => {
 	const { authUser } = useAuthContext();
+	const [isRead, setIsRead] = useState(
+		message.createdAt < lastSeenByReceiver
+	);
 	const formattedTimestamp = dayjs
 		.unix(message.createdAt / 1000)
 		.format('hh:mm a');
 	const isFromMe = message.senderId._id === authUser._id;
+
+	useEffect(() => {
+		if (!lastSeenUpdatedSub.loading && lastSeenUpdatedSub.data) {
+			setIsRead(
+				message.createdAt <
+					lastSeenUpdatedSub.data.lastSeenUpdatedSub.lastSeen
+			);
+		}
+	}, [lastSeenUpdatedSub.data?.lastSeenUpdatedSub.lastSeen]);
 
 	return (
 		<div className={`chat ${isFromMe ? 'chat-end' : 'chat-start'}`}>
@@ -22,8 +36,15 @@ const Message = ({ message }) => {
 			>
 				{message.content}
 			</div>
-			<div className="chat-footer opacity-50 text-xs flex gap-1 items-center">
+			<div className="chat-footer opacity-50 text-platinum text-xs flex gap-1 items-center">
 				{formattedTimestamp}
+				{!isFromMe ? (
+					''
+				) : isRead ? (
+					<TiTick className="text-lime-green" />
+				) : (
+					<TiTickOutline />
+				)}
 			</div>
 		</div>
 	);

@@ -8,7 +8,8 @@ import path from 'path';
 import { authMiddleware } from './utils/auth.js';
 
 import { typeDefs, resolvers } from './schemas/index.js';
-import db from './config/connection.js';
+import mongoose from 'mongoose';
+import connectionString from './config/connection.js';
 import cookieParser from 'cookie-parser';
 
 // graphql subscription/websocket imports
@@ -107,6 +108,9 @@ const startApolloServer = async () => {
 			res.sendFile(path.join(__dirname, '/client/dist/index.html'));
 		});
 	}
+
+	mongoose.connect(connectionString);
+	const db = mongoose.connection;
 
 	// once connection to db is open begin listening
 	db.once('open', () => {

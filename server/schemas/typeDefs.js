@@ -17,6 +17,10 @@ const typeDefs = `#graphql
 
 	type Chat {
 		_id: ID!
+		participantOne: User!
+		participantTwo: User!
+		lastSeenByOne: String!
+		lastSeenByTwo: String!
 		participants: [User!]!
 		messages: [Message!]!
 		# timestamps
@@ -33,6 +37,12 @@ const typeDefs = `#graphql
 		isTyping: Boolean!
 	}
 
+	type LastSeenType {
+		senderId: ID!
+		receiverId: ID!
+		lastSeen: String!
+	}
+
 	type Query {
 		users: [User]!
 		user(userId: ID!): User
@@ -45,6 +55,8 @@ const typeDefs = `#graphql
 		getOnlineUsers: [ID]
 
 		verifyToken(token: ID!): Auth
+
+		notifications: [ID]
 	}
 
 	type Mutation {
@@ -56,14 +68,17 @@ const typeDefs = `#graphql
 		createChat(participantOne: ID!, participantTwo: ID!): Chat
 		
 		isTypingMutation(receiverId: ID!, senderId: ID!, isTyping: Boolean!): Boolean
+
+		updateLastSeen(senderId: ID!, receiverId: ID!): Boolean
 	}
 
 	type Subscription {
-		newMessage(authUserId: ID!, selectedChatId: ID!): Message
+		newMessage(authUserId: ID!): Message
 		loggedIn: ID
 		loggedOut: ID
 		signedUp: User
 		isTypingSub: IsTypingIndicator
+		lastSeenUpdatedSub: LastSeenType
 	}
 `;
 

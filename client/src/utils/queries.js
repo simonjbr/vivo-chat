@@ -37,10 +37,29 @@ export const CHATS = gql`
 	query Chats {
 		chats {
 			_id
-			participants {
+			participantOne {
 				_id
 				username
 				avatar
+			}
+			participantTwo {
+				_id
+				username
+				avatar
+			}
+			lastSeenByOne
+			lastSeenByTwo
+			messages {
+				_id
+				senderId {
+					_id
+					username
+				}
+				receiverId {
+					_id
+					username
+				}
+				createdAt
 			}
 		}
 	}
@@ -50,10 +69,20 @@ export const CHAT = gql`
 	query Chat($participantOne: ID!, $participantTwo: ID!) {
 		chat(participantOne: $participantOne, participantTwo: $participantTwo) {
 			_id
+			participantOne {
+				_id
+				username
+			}
+			participantTwo {
+				_id
+				username
+			}
 			participants {
 				_id
 				username
 			}
+			lastSeenByOne
+			lastSeenByTwo
 			messages {
 				_id
 				senderId {
@@ -85,5 +114,11 @@ export const VERIFY_TOKEN = gql`
 				username
 			}
 		}
+	}
+`;
+
+export const NOTIFICATIONS = gql`
+	query Notifications {
+		notifications
 	}
 `;

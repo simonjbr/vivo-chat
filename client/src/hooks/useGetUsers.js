@@ -4,9 +4,9 @@ import { USERS } from '../utils/queries';
 import toast from 'react-hot-toast';
 import { SIGNED_UP } from '../utils/subscriptions';
 
-const useGetChats = () => {
+const useGetUsers = () => {
 	const [loading, setLoading] = useState(false);
-	const [chats, setChats] = useState([]);
+	const [users, setUsers] = useState([]);
 	const {
 		error,
 		data,
@@ -15,11 +15,11 @@ const useGetChats = () => {
 	} = useQuery(USERS);
 
 	useEffect(() => {
-		const getChats = () => {
+		const getUsers = () => {
 			setLoading(true);
 
 			if (loadingQuery || error) {
-				setChats([]);
+				setUsers([]);
 				return;
 			}
 
@@ -28,7 +28,7 @@ const useGetChats = () => {
 					throw new Error(error);
 				}
 
-				setChats(data?.users || []);
+				setUsers(data?.users || []);
 			} catch (error) {
 				toast.error(error);
 			} finally {
@@ -36,7 +36,7 @@ const useGetChats = () => {
 			}
 		};
 
-		getChats();
+		getUsers();
 	}, [data]);
 
 	// subscribe to any new users
@@ -61,7 +61,7 @@ const useGetChats = () => {
 		});
 	}, []);
 
-	return { loading, chats };
+	return { loading, users };
 };
 
-export default useGetChats;
+export default useGetUsers;

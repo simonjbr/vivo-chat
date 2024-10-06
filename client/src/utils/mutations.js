@@ -102,3 +102,9 @@ export const IS_TYPING_MUTATION = gql`
 		)
 	}
 `;
+
+export const UPDATE_LAST_SEEN = gql`
+	mutation UpdateLastSeen($senderId: ID!, $receiverId: ID!) {
+		updateLastSeen(senderId: $senderId, receiverId: $receiverId)
+	}
+`;
