@@ -6,7 +6,11 @@ import { useEffect, useRef, useState } from 'react';
 import MessageSkeleton from '../skeleton/MessageSkeleton';
 import { useAuthContext } from '../../context/AuthContext';
 import { useSubscription } from '@apollo/client';
-import { IS_TYPING_SUB, NEW_MESSAGE } from '../../utils/subscriptions';
+import {
+	IS_TYPING_SUB,
+	LAST_SEEN_UPDATED_SUB,
+	NEW_MESSAGE,
+} from '../../utils/subscriptions';
 import messagePopAlert from '../../assets/happy-pop-3-185288.mp3';
 import typingPopAlert from '../../assets/multi-pop-1-188165.mp3';
 import { useNotificationContext } from '../../context/NotificationContext';
@@ -42,6 +46,7 @@ const Messages = () => {
 	const isTypingSubscription = useSubscription(IS_TYPING_SUB);
 
 	const [updateLastSeen] = useMutation(UPDATE_LAST_SEEN);
+	const lastSeenUpdatedSub = useSubscription(LAST_SEEN_UPDATED_SUB);
 
 	useEffect(() => {
 		if (!isTypingSubscription.loading && isTypingSubscription.data) {
@@ -114,11 +119,14 @@ const Messages = () => {
 				setTypingIndicator(false);
 
 				// update lastSeenBy
-				updateLastSeen({
-					variables: {
-						selectedChatId: selectedChat._id,
-					},
-				});
+				if (newMessage.senderId._id !== authUser._id) {
+					updateLastSeen({
+						variables: {
+							senderId: newMessage.senderId._id,
+							receiverId: newMessage.receiverId._id,
+						},
+					});
+				}
 				return;
 			}
 
@@ -160,6 +168,7 @@ const Messages = () => {
 							<Message
 								message={message}
 								lastSeenByReceiver={lastSeenByReceiver}
+								lastSeenUpdatedSub={lastSeenUpdatedSub}
 							/>
 						</div>
 					))
